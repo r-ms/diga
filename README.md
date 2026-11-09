@@ -55,7 +55,8 @@ Requires a Mac with Apple Silicon (M1 or newer) and macOS 14+.
 
 ```bash
 brew install r-ms/tools/diga
-brew services start diga      # start now and at every login
+diga models --download default   # once: diga's Python packages and the models (~3.5 GB)
+brew services start diga         # start now and at every login
 ```
 
 Or without Homebrew, one command that also installs [uv](https://docs.astral.sh/uv/) if needed,
@@ -65,8 +66,7 @@ downloads the models and starts diga at login:
 curl -LsSf https://raw.githubusercontent.com/r-ms/diga/main/install.sh | sh
 ```
 
-The models (about 3.5 GB) are downloaded once, on the first start. Then hold the right ⌘ and
-speak; `diga doctor` checks permissions, recognizers and models.
+Then hold the right ⌘ and speak; `diga doctor` checks permissions, recognizers and models.
 
 <details><summary>Step by step with uv</summary>
 
