@@ -1,0 +1,10 @@
+diga downloads and runs third-party models. They are not distributed with diga and keep
+their own licenses:
+
+- GigaAM v3 (ai-sage/GigaAM-v3) — MIT — https://github.com/salute-developers/GigaAM
+- GigaAM v3 ONNX export (istupakov/gigaam-v3-onnx) — MIT
+- NVIDIA Parakeet TDT 0.6B v3 (nvidia/parakeet-tdt-0.6b-v3, MLX conversion
+  mlx-community/parakeet-tdt-0.6b-v3) — CC-BY-4.0 — https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3
+- OpenAI Whisper large-v3-turbo (MLX conversion mlx-community/whisper-large-v3-turbo) — MIT
+
+The CTC word-spotting approach follows NeMo's CTC word spotter (Andrusenko et al., 2024).

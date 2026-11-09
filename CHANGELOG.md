@@ -1,0 +1,44 @@
+# Changelog
+
+All notable changes to this project are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
+[Semantic Versioning](https://semver.org/).
+
+## [0.1.0] — unreleased
+
+First public version.
+
+### Added
+- Push-to-talk on the right ⌘: hold to dictate and press Return on release, double-tap for long
+  dictation, ⌘ + another key cancels.
+- Progressive typing: recordings are cut into 10–20 s chunks at pauses and each chunk is typed as
+  soon as it is recognized.
+- Recognizers: GigaAM v3 (Russian), Parakeet TDT 0.6B v3 (English, Portuguese and 23 more
+  European languages), Whisper large-v3-turbo (other languages).
+- Term correction from a glossary: acoustic CTC keyword spotting plus text matching for Russian,
+  text matching elsewhere; multi-word replacements ("гит лаб" → GitLab).
+- Nothing to choose: the default language `auto` detects every chunk's language with Parakeet
+  and re-recognizes Russian chunks with GigaAM; the menu has no switches, and
+  `~/.config/diga/config.yaml` changes the defaults.
+- Second opinion for Russian (on by default): GigaAM and Parakeet both transcribe; disagreements
+  are settled by a small language model (Qwen3 0.6B) reading both wordings in context, then by
+  GigaAM's word confidence.
+- Word-level confidence from every recognizer.
+- Faster: the acoustic term model runs alongside the recognizer, and text is typed up to 20
+  characters per key event (a long chunk used to take ~0.8 s to type, now ~0.05 s).
+- Menu-bar app in English, Russian and Portuguese; a warning when macOS does not let diga type.
+- Menu-bar icon drawn with SF Symbols (red while recording).
+- Our own quiet sounds — when recording starts and once the text is typed (silent when a
+  dictation is cancelled or empty); four sets plus Off in the menu, or a folder of your own.
+- `diga -v` shows, for every chunk, what each recognizer heard and how long it took, how the
+  second opinion settled each disagreement and which terms were replaced. Logs written to a
+  file (autostart) carry timestamps and leave out the dictated text.
+- One-command install (`install.sh`: uv, diga, models, start at login); `diga doctor`,
+  `diga models --download default`, `diga autostart`.
+- Offline after the first download: models load from the local cache, every model is pinned
+  to a commit.
+- Benchmarks for latency, term correction and word errors.
+
+### Fixed (during development)
+- Typing a chunk while holding ⌘ no longer cancels a long hold-to-talk dictation.
+- Multi-word replacements ("гит лаб" → GitLab) are applied.
