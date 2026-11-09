@@ -67,6 +67,7 @@ curl -LsSf https://raw.githubusercontent.com/r-ms/diga/main/install.sh | sh
 ```
 
 Then hold the right ⌘ and speak; `diga doctor` checks permissions, recognizers and models.
+With every model loaded diga uses about 4 GB of memory (3.7 GB without the language model).
 
 <details><summary>Step by step with uv</summary>
 
@@ -120,8 +121,8 @@ create `~/.config/diga/config.yaml`:
 language: en                    # pin one language instead of auto: ru | en | pt | Whisper code
 send_return_after_hold: false   # type the text but don't press Return
 sounds: ~/my-sounds             # your own start.wav / done.wav (or soft, tick, drop, chime, off)
-second_opinion: false           # Russian: GigaAM alone (saves ~2.9 GB of memory with language: ru)
-second_opinion_lm: false        # no language model judge (~0.7 GB; off by default on 8 GB Macs)
+second_opinion: false           # Russian: GigaAM alone (with language: ru, Parakeet is not loaded)
+second_opinion_lm: false        # no language model judge (~0.4 GB; off by default on 8 GB Macs)
 backends: {de: whisper}         # which recognizer handles which language
 chunking: {min_chunk_s: 8}      # cut at the first pause after 8 s instead of 10
 terms: {ctc_precision: fp32}    # full-precision spotter (886 MB) instead of int8 (225 MB)

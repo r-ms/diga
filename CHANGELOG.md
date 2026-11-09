@@ -4,7 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
-## [0.1.0] — unreleased
+## [0.1.1] — 2026-11-09
+
+### Fixed
+- Memory: GPU buffer pools of MLX (Parakeet, the language model) and PyTorch (GigaAM) grew
+  with every chunk length — 8.4 GB after a few dictations. They are now capped: about 4 GB
+  with every model loaded (3.7 GB without the language model), at the same speed.
+
+## [0.1.0] — 2026-11-09
 
 First public version.
 

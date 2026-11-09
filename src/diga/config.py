@@ -74,11 +74,11 @@ class Config:
     # soft | tick | drop | chime | off, or a folder with your own start.wav / done.wav
     sounds: str = "soft"
     # Russian: GigaAM and Parakeet both transcribe, a small language model settles where they
-    # disagree (asr/second_opinion.py). Turn off to save ~2.9 GB of memory when `language: ru`.
+    # disagree (asr/second_opinion.py). Off: with `language: ru`, Parakeet is not loaded.
     second_opinion: bool = True
     second_opinion_unsure: float = 0.8  # GigaAM words below this confidence may be replaced
     second_opinion_insert: float = 0.85  # Parakeet words GigaAM dropped are inserted above this
-    # A small language model (Qwen3 0.6B, ~0.7 GB of memory) settles disagreements in context.
+    # A small language model (Qwen3 0.6B, ~0.4 GB of memory) settles disagreements in context.
     # None: on, except on Macs with 8 GB of memory or less, where it is left out.
     second_opinion_lm: bool | None = None
     second_opinion_lm_margin: float = 0.25  # nats per token

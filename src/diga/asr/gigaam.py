@@ -91,6 +91,10 @@ class GigaAMTranscriber:
                 return Transcript("")
             frame_s = wav.shape[-1] / SAMPLE_RATE / n_frames
             tokens, frames, confidences = self._greedy_decode(encoded, n_frames)
+        if self._device.type == "mps":
+            # PyTorch keeps freed GPU buffers for reuse; with chunks of every length that pool
+            # only grows (several GB over a session). Releasing it costs no measurable time.
+            torch.mps.empty_cache()
         words = self._words(tokens, frames, confidences, frame_s)
         return Transcript(" ".join(w.text for w in words), tuple(words))
 
