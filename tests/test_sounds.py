@@ -29,3 +29,10 @@ def test_the_sound_picked_in_the_menu_is_remembered(isolated_config):
     assert load_config().sounds == sounds.DEFAULT
     save_setting("sounds", "tick")
     assert load_config().sounds == "tick"
+
+
+def test_the_key_picked_in_the_menu_is_remembered(isolated_config):
+    assert load_config().hotkey.key == "right_cmd"
+    save_setting("hotkey", {"key": "fn"})
+    cfg = load_config()
+    assert cfg.hotkey.key == "fn" and cfg.hotkey.hold_s == 0.3  # other hotkey settings kept

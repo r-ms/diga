@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.2] — 2026-11-09
+
+### Added
+- Menu → Key: dictate with right ⌘ (default), right ⌥ or Fn (🌐); remembered like the sound.
+
+### Fixed
+- `uv run diga` in a clone installs the recognizers (a recreated environment had none).
+- Without Parakeet, `auto` falls back to Russian instead of failing to start.
+- A failed start no longer ends with "cannot join current thread".
+
 ## [0.1.1] — 2026-11-09
 
 ### Fixed

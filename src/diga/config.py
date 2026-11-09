@@ -2,7 +2,7 @@
 
 The defaults are meant to be the best choice, so there is nothing to set up. Precedence, lowest
 to highest: built-in defaults → ``~/.config/diga/config.yaml`` (optional) →
-``~/.config/diga/settings.json`` (what you picked in the menu: the sound) → command line.
+``~/.config/diga/settings.json`` (what you picked in the menu: key and sound) → command line.
 Set ``DIGA_CONFIG_DIR`` to use another directory.
 """
 
@@ -44,6 +44,7 @@ class ChunkingConfig:
 
 @dataclass
 class HotkeyConfig:
+    key: str = "right_cmd"  # right_cmd | right_option | fn
     hold_s: float = 0.3  # holding right ⌘ longer than this starts recording
     double_tap_s: float = 0.4  # two taps within this toggle a long recording
 
@@ -115,7 +116,7 @@ class Config:
         )
 
 
-MENU_SETTINGS = ("sounds",)
+MENU_SETTINGS = ("sounds", "hotkey")
 
 
 def _merge(obj: Any, data: dict[str, Any], where: str) -> None:

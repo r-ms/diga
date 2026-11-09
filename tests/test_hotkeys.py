@@ -114,3 +114,31 @@ def test_real_key_during_hold_still_cancels():
     last_timer().fire()
     hk.on_key_down(0)  # a key from the keyboard
     assert ev == ["hold_start", "hold_end(cancel=True)"]
+
+
+def test_other_keys_can_be_chosen_and_right_cmd_then_does_nothing():
+    from diga.hotkeys import FN_MASK, RIGHT_OPTION_MASK
+
+    for key, mask in (("right_option", RIGHT_OPTION_MASK), ("fn", FN_MASK)):
+        events: list[str] = []
+        hk = HotkeyManager(timer_factory=FakeTimer, key=key)
+        hk.bind(
+            hold_start=lambda e=events: e.append("hold_start"),
+            hold_end=lambda cancel, e=events: e.append(f"hold_end(cancel={cancel})"),
+        )
+        hk.on_flags(RIGHT_CMD_MASK, 0.0)  # right ⌘ is no longer the dictation key
+        assert FakeTimer.last is None or FakeTimer.last.cancelled or events == []
+        hk.on_flags(0, 0.1)
+        hk.on_flags(mask, 1.0)
+        last_timer().fire()
+        hk.on_flags(0, 2.0)
+        assert events == ["hold_start", "hold_end(cancel=False)"], key
+
+
+def test_switching_the_key_forgets_a_press_in_progress():
+    hk, events = make()
+    hk.on_flags(DOWN, 0.0)
+    hk.set_key("fn")
+    last_timer().fire()  # the old key's hold timer was cancelled
+    hk.on_flags(UP, 0.5)
+    assert events == []

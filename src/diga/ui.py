@@ -5,9 +5,9 @@
 Icon (SF Symbols, follow the light/dark menu bar): hourglass loading · mic ready ·
 red filled mic recording · waveform finishing the last chunk. Sounds (``sounds.py``): start of
 recording, and success once the text is typed. Emoji on macOS without SF Symbols.
-Menu: a hint, the sound set (picking one plays it), open glossary, quit — and a warning when
-macOS does not let diga type. Nothing else to choose: the language is detected per chunk and
-the rest are the best defaults (``~/.config/diga/config.yaml`` changes them).
+Menu: a hint, the dictation key, the sound set (picking one plays it), open glossary, quit —
+and a warning when macOS does not let diga type. Nothing else to choose: the language is
+detected per chunk and the rest are the best defaults (``~/.config/diga/config.yaml``).
 
 The recorder runs on a background thread; every AppKit change is marshalled to the main thread.
 """
@@ -19,6 +19,7 @@ import subprocess
 from collections.abc import Callable
 
 from . import sounds
+from .hotkeys import DEFAULT_KEY, KEYS
 from .i18n import t
 
 log = logging.getLogger(__name__)
@@ -67,7 +68,7 @@ def _on_main(fn: Callable[[], None]) -> None:
 
 
 class MenuBar:
-    def __init__(self, sound_choice: str = sounds.DEFAULT) -> None:
+    def __init__(self, sound_choice: str = sounds.DEFAULT, key: str = DEFAULT_KEY) -> None:
         import rumps
 
         self._rumps = rumps
@@ -77,13 +78,21 @@ class MenuBar:
         rumps.events.before_start.register(lambda: self._apply_icon(self._icon))
         self._on_quit: Callable[[], None] | None = None
         self._on_sounds: Callable[[str], None] | None = None
+        self._on_key: Callable[[str], None] | None = None
         self._glossary_path: str | None = None
         self._sound_choice = sound_choice
         self._sounds = sounds.resolve(sound_choice)
 
         self._warning_key = ""
-        self._hint_key = t("menu.hint")
-        hint = rumps.MenuItem(self._hint_key)  # no callback: shown greyed out, as a label
+        self._hint_key = t("menu.hint", key=t(f"key.{key}"))
+        self._hint = rumps.MenuItem(self._hint_key)  # no callback: greyed out, as a label
+        self._key_menu = rumps.MenuItem(t("menu.key"))
+        self._key_items: dict[str, object] = {}
+        for k in KEYS:
+            item = rumps.MenuItem(t(f"key.{k}"), callback=self._clicked_key)
+            item.state = int(k == key)
+            self._key_items[k] = item
+            self._key_menu.add(item)
         self._glossary_item = rumps.MenuItem(
             t("menu.open_glossary"), callback=self._clicked_glossary
         )
@@ -105,8 +114,9 @@ class MenuBar:
             self._sound_items[choice] = item
             self._sound_menu.add(item)
         self.app.menu = [
-            hint,
+            self._hint,
             None,
+            self._key_menu,
             self._sound_menu,
             self._glossary_item,
             None,
@@ -130,10 +140,22 @@ class MenuBar:
         quit: Callable[[], None],
         glossary_path: str | None,
         sounds: Callable[[str], None] | None = None,
+        key: Callable[[str], None] | None = None,
     ) -> None:
         self._on_quit = quit
         self._glossary_path = glossary_path
         self._on_sounds = sounds
+        self._on_key = key
+
+    def _clicked_key(self, sender: object) -> None:
+        key = next((k for k, item in self._key_items.items() if item is sender), None)
+        if key is None:
+            return
+        for k, item in self._key_items.items():
+            item.state = int(k == key)  # type: ignore[attr-defined]
+        self._hint.title = t("menu.hint", key=t(f"key.{key}"))  # type: ignore[attr-defined]
+        if self._on_key:
+            self._on_key(key)
 
     def _clicked_sound(self, sender: object) -> None:
         choice = next((c for c, item in self._sound_items.items() if item is sender), None)

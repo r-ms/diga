@@ -12,7 +12,12 @@ STRINGS: dict[str, dict[str, str]] = {
     "en": {
         "status.second_opinion_missing": "The second opinion needs Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
-        "menu.hint": "Hold right ⌘ and speak",
+        "menu.hint": "Hold {key} and speak",
+        "menu.key": "Key",
+        "status.key": "Dictation key: {key}",
+        "key.right_cmd": "right ⌘",
+        "key.right_option": "right ⌥",
+        "key.fn": "Fn (🌐)",
         "status.auto_without_detector": "Language detection is off ({reason}); dictating in "
         "Russian only",
         "status.russian_missing": "Russian is recognized by Parakeet; for better Russian "
@@ -31,12 +36,12 @@ STRINGS: dict[str, dict[str, str]] = {
         " Privacy & Security → Accessibility → turn {app} on, then restart "
         "diga.",
         "status.loading": "Loading {model}…",
-        "status.ready_hotkeys": "Ready. Hold right ⌘ to dictate, release to insert{send}. "
-        "Double-tap right ⌘ for long dictation.",
+        "status.ready_hotkeys": "Ready. Hold {key} to dictate, release to insert{send}. "
+        "Double-tap {key} for long dictation.",
         "status.ready_send": " and press Return",
         "status.ready_stdin": "Ready. Press Enter to start/stop recording, Ctrl+C to quit.",
-        "status.recording_hold": "● recording… (release right ⌘ to stop)",
-        "status.recording_toggle": "● recording… (double-tap right ⌘ to stop)",
+        "status.recording_hold": "● recording… (release the key to stop)",
+        "status.recording_toggle": "● recording… (double-tap the key to stop)",
         "status.stopped": "○ stopped, finishing the last chunk…",
         "status.chunk": "  ✓ chunk {i}: {audio:.1f} s of audio → {asr:.2f} s  «{text}»",
         "status.done": "  done: {audio:.1f} s of audio, {chunks} chunk(s), "
@@ -44,7 +49,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.sent": "  ⏎ sent",
         "status.too_short": "  too short — skipped",
         "status.nothing": "  (nothing recognized)",
-        "status.cancelled": "  cancelled: another key was pressed while holding ⌘",
+        "status.cancelled": "  cancelled: another key was pressed while holding the key",
         "status.limit": "  recording limit of {seconds:.0f} s reached — stopping",
         "status.terms_off": "Term correction is off: {reason}",
         "status.quit": "Bye.",
@@ -52,7 +57,12 @@ STRINGS: dict[str, dict[str, str]] = {
     "ru": {
         "status.second_opinion_missing": "Для второго мнения нужен Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
-        "menu.hint": "Держи правый ⌘ и говори",
+        "menu.hint": "Держи {key} и говори",
+        "menu.key": "Клавиша",
+        "status.key": "Клавиша диктовки: {key}",
+        "key.right_cmd": "правый ⌘",
+        "key.right_option": "правый ⌥",
+        "key.fn": "Fn (🌐)",
         "status.auto_without_detector": "Определение языка выключено ({reason}); диктовка "
         "только по-русски",
         "status.russian_missing": "Русский распознаёт Parakeet; для лучшего русского "
@@ -71,19 +81,19 @@ STRINGS: dict[str, dict[str, str]] = {
         "настройки → Конфиденциальность и безопасность → Универсальный доступ →"
         " включи {app}, затем перезапусти diga.",
         "status.loading": "Загружаю {model}…",
-        "status.ready_hotkeys": "Готово. Держи правый ⌘ — диктовка, отпустил — вставка{send}. "
-        "Двойное нажатие правого ⌘ — длинная диктовка.",
+        "status.ready_hotkeys": "Готово. Держи {key} — диктовка, отпустил — вставка{send}. "
+        "Нажми {key} дважды — длинная диктовка.",
         "status.ready_send": " и Enter",
         "status.ready_stdin": "Готово. Enter — старт/стоп записи, Ctrl+C — выход.",
-        "status.recording_hold": "● запись… (отпусти правый ⌘ — стоп)",
-        "status.recording_toggle": "● запись… (двойное нажатие правого ⌘ — стоп)",
+        "status.recording_hold": "● запись… (отпусти клавишу — стоп)",
+        "status.recording_toggle": "● запись… (нажми клавишу дважды — стоп)",
         "status.stopped": "○ стоп, досчитываю последний кусок…",
         "status.chunk": "  ✓ кусок {i}: {audio:.1f} с звука → {asr:.2f} с  «{text}»",
         "status.done": "  готово: {audio:.1f} с звука, кусков: {chunks}, после стопа {after:.2f} с",
         "status.sent": "  ⏎ отправлено",
         "status.too_short": "  слишком коротко — пропускаю",
         "status.nothing": "  (ничего не распознано)",
-        "status.cancelled": "  отменено: пока держал ⌘, была нажата другая клавиша",
+        "status.cancelled": "  отменено: пока держал клавишу, была нажата другая",
         "status.limit": "  достигнут лимит записи {seconds:.0f} с — останавливаю",
         "status.terms_off": "Исправление терминов выключено: {reason}",
         "status.quit": "Выход.",
@@ -91,7 +101,12 @@ STRINGS: dict[str, dict[str, str]] = {
     "pt": {
         "status.second_opinion_missing": "A segunda opinião precisa do Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
-        "menu.hint": "Mantenha o ⌘ direito premido e fale",
+        "menu.hint": "{key}: mantenha premido e fale",
+        "menu.key": "Tecla",
+        "status.key": "Tecla de ditado: {key}",
+        "key.right_cmd": "⌘ direito",
+        "key.right_option": "⌥ direito",
+        "key.fn": "Fn (🌐)",
         "status.auto_without_detector": "Deteção de idioma desligada ({reason}); ditado "
         "só em russo",
         "status.russian_missing": "O russo é reconhecido pelo Parakeet; para um russo "
@@ -110,12 +125,12 @@ STRINGS: dict[str, dict[str, str]] = {
         " do Sistema → Privacidade e Segurança → Acessibilidade → ligue {app} e"
         " reinicie o diga.",
         "status.loading": "A carregar {model}…",
-        "status.ready_hotkeys": "Pronto. Mantenha o ⌘ direito premido para ditar e solte para "
-        "inserir{send}. Toque duas vezes no ⌘ direito para ditados longos.",
+        "status.ready_hotkeys": "Pronto. {key}: mantenha premido para ditar e solte para "
+        "inserir{send}; dois toques para ditados longos.",
         "status.ready_send": " e premir Enter",
         "status.ready_stdin": "Pronto. Enter inicia/para a gravação, Ctrl+C sai.",
-        "status.recording_hold": "● a gravar… (solte o ⌘ direito para parar)",
-        "status.recording_toggle": "● a gravar… (dois toques no ⌘ direito para parar)",
+        "status.recording_hold": "● a gravar… (solte a tecla para parar)",
+        "status.recording_toggle": "● a gravar… (dois toques na tecla para parar)",
         "status.stopped": "○ parado, a terminar o último bloco…",
         "status.chunk": "  ✓ bloco {i}: {audio:.1f} s de áudio → {asr:.2f} s  «{text}»",
         "status.done": "  concluído: {audio:.1f} s de áudio, {chunks} bloco(s), "
@@ -123,7 +138,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.sent": "  ⏎ enviado",
         "status.too_short": "  demasiado curto — ignorado",
         "status.nothing": "  (nada reconhecido)",
-        "status.cancelled": "  cancelado: foi premida outra tecla enquanto o ⌘ estava premido",
+        "status.cancelled": "  cancelado: foi premida outra tecla enquanto a tecla estava premida",
         "status.limit": "  limite de gravação de {seconds:.0f} s atingido — a parar",
         "status.terms_off": "Correção de termos desligada: {reason}",
         "status.quit": "Adeus.",
@@ -161,6 +176,6 @@ def current_language() -> str:
     return _current
 
 
-def t(key: str, **kwargs: object) -> str:
+def t(key: str, /, **kwargs: object) -> str:
     text = STRINGS.get(_current, {}).get(key) or STRINGS["en"][key]
     return text.format(**kwargs) if kwargs else text

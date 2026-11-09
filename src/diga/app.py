@@ -231,11 +231,23 @@ class App:
             log.info(t("status.quit"))
 
     def _run_menu_bar(self) -> None:
-        from .hotkeys import HotkeyManager
+        from .hotkeys import DEFAULT_KEY, KEYS, HotkeyManager
         from .ui import MenuBar
 
-        self.menu = MenuBar(self.cfg.sounds)
-        hotkeys = HotkeyManager(self.cfg.hotkey.hold_s, self.cfg.hotkey.double_tap_s)
+        self.menu = MenuBar(self.cfg.sounds, self.cfg.hotkey.key)
+        if self.cfg.hotkey.key not in KEYS:
+            log.warning("unknown hotkey %r, using %s", self.cfg.hotkey.key, DEFAULT_KEY)
+            self.cfg.hotkey.key = DEFAULT_KEY
+        hotkeys = HotkeyManager(
+            self.cfg.hotkey.hold_s, self.cfg.hotkey.double_tap_s, key=self.cfg.hotkey.key
+        )
+
+        def set_key(key: str) -> None:
+            hotkeys.set_key(key)
+            self.cfg.hotkey.key = key
+            save_setting("hotkey", {"key": key})
+            log.info(t("status.key", key=t(f"key.{key}")))
+
         hotkeys.start()  # must be attached before the run loop starts
 
         # Ctrl-C used to crash inside native code (onnxruntime, CoreAudio) when SIGINT landed
@@ -267,6 +279,7 @@ class App:
                 quit=shutdown,
                 glossary_path=str(self.glossary.path),
                 sounds=lambda choice: save_setting("sounds", choice),
+                key=set_key,
             )
             hotkeys.bind(
                 toggle=self.recorder.toggle,
@@ -275,7 +288,7 @@ class App:
             )
             self.menu.ready()
             send = t("status.ready_send") if self.cfg.send_return_after_hold else ""
-            log.info(t("status.ready_hotkeys", send=send))
+            log.info(t("status.ready_hotkeys", send=send, key=t(f"key.{self.cfg.hotkey.key}")))
             self.recorder.run(self.stop)
 
         worker = threading.Thread(target=start, name="diga-recorder", daemon=True)

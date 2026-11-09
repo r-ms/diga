@@ -91,8 +91,13 @@ the ⌘ key and to type. `diga doctor` tells you exactly where to switch them on
 | Hold right ⌘, speak, release | Text is typed, then Return |
 | Hold right ⌘ and press another key | Treated as a shortcut — nothing is typed |
 | Double-tap right ⌘ | Start a long dictation; double-tap again to stop (no Return) |
+| Menu → Key | Right ⌘ (default), right ⌥ or Fn (🌐) |
 | Menu → Sound | Soft, Tick, Drop, Chime or Off — you hear each one as you pick it |
 | Menu → Open glossary | Edit your terms; changes apply to the next dictation |
+
+Left ⌘ is not offered on purpose: ⌘-click and ⌘-drag press no other key, so they would start
+recordings. With Fn (🌐), set System Settings → Keyboard → "Press 🌐 key to" → *Do Nothing*, or
+macOS opens emoji or its own dictation when you release it.
 
 `diga --no-ui` runs without the menu bar (Enter starts and stops); `--print-only` prints instead
 of typing — handy for trying it out. `diga -v` explains every chunk: what each recognizer heard,
@@ -124,6 +129,7 @@ sounds: ~/my-sounds             # your own start.wav / done.wav (or soft, tick, 
 second_opinion: false           # Russian: GigaAM alone (with language: ru, Parakeet is not loaded)
 second_opinion_lm: false        # no language model judge (~0.4 GB; off by default on 8 GB Macs)
 backends: {de: whisper}         # which recognizer handles which language
+hotkey: {key: fn}               # right_cmd (default), right_option or fn
 chunking: {min_chunk_s: 8}      # cut at the first pause after 8 s instead of 10
 terms: {ctc_precision: fp32}    # full-precision spotter (886 MB) instead of int8 (225 MB)
 ```

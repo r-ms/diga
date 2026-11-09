@@ -1,11 +1,16 @@
 # pyright: reportAttributeAccessIssue=false
 # (PyObjC exposes macOS framework symbols dynamically, so static checkers cannot see them.)
-"""Global hotkeys on the right ⌘ key, via a listen-only CGEventTap.
+"""Global hotkeys on one modifier key — right ⌘ by default — via a listen-only CGEventTap.
 
-* **hold** right ⌘ longer than ``hold_s`` → ``on_hold_start()``; release → ``on_hold_end(cancel)``.
-  If another key is pressed while ⌘ is down, it was a shortcut (⌘C, ⌘Tab…): ``cancel=True``.
-* **double-tap** right ⌘ within ``double_tap_s`` → ``on_toggle()``. A tap is a press and
+* **hold** the key longer than ``hold_s`` → ``on_hold_start()``; release → ``on_hold_end(cancel)``.
+  If another key is pressed while it is down, it was a shortcut (⌘C, ⌘Tab…): ``cancel=True``.
+* **double-tap** the key within ``double_tap_s`` → ``on_toggle()``. A tap is a press and
   release with no other key in between and shorter than the hold threshold.
+
+Keys (``KEYS``): right ⌘ (rarely used, on every Mac keyboard), right ⌥, and Fn/🌐 (not on
+every external keyboard; macOS may also use it for emoji or its own dictation). Left ⌘ is
+deliberately not offered: ⌘-click and ⌘-drag press no other key, so they would start
+recordings that cannot be told apart from dictation.
 
 Requires the Accessibility / Input Monitoring permission for the hosting process. The event
 tap is attached to the main run loop (the menu-bar app runs it).
@@ -24,6 +29,10 @@ from .inject import INJECTED_EVENT_MARK
 log = logging.getLogger(__name__)
 
 RIGHT_CMD_MASK = 0x10  # NX_DEVICERCMDKEYMASK
+RIGHT_OPTION_MASK = 0x40  # NX_DEVICERALTKEYMASK
+FN_MASK = 0x800000  # kCGEventFlagMaskSecondaryFn
+KEYS = {"right_cmd": RIGHT_CMD_MASK, "right_option": RIGHT_OPTION_MASK, "fn": FN_MASK}
+DEFAULT_KEY = "right_cmd"
 
 
 class HotkeyManager:
@@ -32,7 +41,9 @@ class HotkeyManager:
         hold_s: float = 0.3,
         double_tap_s: float = 0.4,
         timer_factory: Callable[..., Any] = threading.Timer,
+        key: str = DEFAULT_KEY,
     ) -> None:
+        self._mask = KEYS.get(key, RIGHT_CMD_MASK)
         self._hold_s = hold_s
         self._double_tap_s = double_tap_s
         self._timer_factory = timer_factory
@@ -41,7 +52,7 @@ class HotkeyManager:
         self._on_hold_end: Callable[[bool], None] | None = None
         self._lock = threading.Lock()  # the hold timer fires on its own thread
         self._down = False
-        self._used = False  # another key was pressed while ⌘ was down
+        self._used = False  # another key was pressed while ours was down
         self._holding = False
         self._hold_timer: Any = None
         self._last_tap = float("-inf")
@@ -61,6 +72,14 @@ class HotkeyManager:
         if hold_end is not None:
             self._on_hold_end = hold_end
 
+    def set_key(self, key: str) -> None:
+        """Switch to another key (from the menu); a press in progress is forgotten."""
+        with self._lock:
+            self._mask = KEYS[key]
+            self._cancel_timer()
+            self._down = self._used = self._holding = False
+            self._last_tap = float("-inf")
+
     # --- pure logic, driven by the event tap (and by tests) ---
 
     def _cancel_timer(self) -> None:
@@ -79,7 +98,7 @@ class HotkeyManager:
 
     def on_key_down(self, source_user_data: int = 0) -> None:
         if source_user_data == INJECTED_EVENT_MARK:
-            return  # diga typing a chunk while you hold ⌘ is not "⌘ + another key"
+            return  # diga typing a chunk while you hold the key is not "key + another key"
         end: bool | None = None
         with self._lock:
             if self._down:
@@ -87,12 +106,12 @@ class HotkeyManager:
                 self._cancel_timer()
                 if self._holding:
                     self._holding = False
-                    end = True  # ⌘ + key while recording: it was a shortcut
+                    end = True  # key + another key while recording: it was a shortcut
         if end is not None and self._on_hold_end:
             self._on_hold_end(end)
 
     def on_flags(self, flags: int, now: float) -> None:
-        down = bool(flags & RIGHT_CMD_MASK)
+        down = bool(flags & self._mask)
         end: bool | None = None
         tap = False
         with self._lock:
