@@ -286,6 +286,7 @@ wheels = [
 name = "diga"
 version = "0.1.1"
 source = { editable = "." }
+default-groups = ["dev", "models"]
 dependencies = [
     { name = "huggingface-hub" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -334,6 +335,9 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
+models = [
+    { name = "diga", extra = ["all"] },
+]
 
 [package.metadata]
 requires-dist = [
@@ -365,6 +369,7 @@ dev = [
     { name = "pytest", specifier = ">=8" },
     { name = "ruff", specifier = ">=0.6" },
 ]
+models = [{ name = "diga", extras = ["all"] }]
 
 [[package]]
 name = "distlib"

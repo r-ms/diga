@@ -12,6 +12,7 @@ __all__ = [
     "Transcript",
     "Word",
     "create_transcriber",
+    "installed",
 ]
 
 # backend → (extra to install, languages it is meant for)
@@ -20,6 +21,17 @@ BACKENDS: dict[str, tuple[str, str]] = {
     "parakeet": ("parakeet", "25 European languages incl. English and Portuguese"),
     "whisper": ("whisper", "99 languages"),
 }
+
+
+_MODULES = {"gigaam": "transformers", "parakeet": "parakeet_mlx", "whisper": "mlx_whisper"}
+
+
+def installed(backend: str) -> bool:
+    """Is the recognizer's extra installed? (Checked without importing it.)"""
+    import importlib.util
+
+    module = _MODULES.get(backend)
+    return module is not None and importlib.util.find_spec(module) is not None
 
 
 class MissingBackend(RuntimeError):

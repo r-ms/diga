@@ -9,7 +9,7 @@ import sys
 import threading
 from collections.abc import Callable
 
-from .asr import MissingBackend, Transcriber, create_transcriber
+from .asr import MissingBackend, Transcriber, create_transcriber, installed
 from .config import Config, save_setting
 from .i18n import t
 from .permissions import can_post_events, host_app
@@ -109,7 +109,14 @@ class App:
     def _auto(self) -> tuple[Transcriber, bool]:
         """Parakeet for every chunk; GigaAM (+ Parakeet + language model) for Russian ones."""
         log.info(t("status.loading", model=self.cfg.backend_for("auto")))
-        detector = create_transcriber("auto", self.cfg, prompt=whisper_prompt(self.glossary))
+        try:
+            detector = create_transcriber("auto", self.cfg, prompt=whisper_prompt(self.glossary))
+        except MissingBackend as missing:
+            if not installed(self.cfg.backend_for("ru")):
+                raise
+            log.warning(t("status.auto_without_detector", reason=missing))
+            russian = create_transcriber("ru", self.cfg)
+            return russian, True
         try:
             log.info(t("status.loading", model=self.cfg.backend_for("ru")))
             russian = create_transcriber("ru", self.cfg)
@@ -238,7 +245,7 @@ class App:
 
         def shutdown() -> None:
             self.stop.set()
-            if worker is not None:
+            if worker is not None and worker is not threading.current_thread():
                 worker.join(timeout=3)
             log.info(t("status.quit"))
             os._exit(0)  # rumps' run loop does not return on its own

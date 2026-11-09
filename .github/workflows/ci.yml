@@ -7,12 +7,14 @@ on:
 
 jobs:
   test:
+    env:
+      UV_NO_SYNC: "1"  # keep the environment from the install step (no model extras)
     runs-on: macos-latest  # Apple Silicon: the same platform diga targets
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - name: Install (no model extras — unit tests never load a model)
-        run: uv sync --group dev
+        run: uv sync --no-default-groups --group dev
       - name: Lint
         run: uv run ruff check . && uv run ruff format --check .
       - name: Type-check

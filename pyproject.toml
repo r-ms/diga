@@ -58,6 +58,11 @@ Issues = "https://github.com/r-ms/diga/issues"
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6", "pyright>=1.1.380", "pre-commit>=3.7"]
+# `uv run diga` in a clone gets the recognizers too (CI skips them: unit tests load no model).
+models = ["diga[all]"]
+
+[tool.uv]
+default-groups = ["dev", "models"]
 
 [build-system]
 requires = ["hatchling>=1.26"]

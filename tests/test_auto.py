@@ -122,3 +122,24 @@ def test_after_a_russian_chunk_gigaam_starts_early_and_is_dropped_if_not_needed(
     assert english.text == "Now in English" and english.language is None
     auto._pool.shutdown(wait=True)
     assert gigaam.calls == 3  # the early run happened; its result was dropped
+
+
+def test_without_parakeet_auto_falls_back_to_russian(monkeypatch, isolated_config, caplog):
+    import diga.app as app
+    from diga.asr import MissingBackend
+    from diga.config import Config
+
+    gigaam = Fake("gigaam", transcript("Привет"))
+
+    def create(language, cfg, prompt=None):
+        if cfg.backend_for(language) == "parakeet":
+            raise MissingBackend("parakeet")
+        return gigaam
+
+    monkeypatch.setattr(app, "create_transcriber", create)
+    monkeypatch.setattr(app, "installed", lambda backend: backend == "gigaam")
+    cfg = Config()
+    cfg.terms.enabled = False
+    transcriber, _ = app.App(cfg, with_ui=False).build_engine("auto")
+    assert transcriber is gigaam
+    assert "parakeet" in caplog.text.lower()

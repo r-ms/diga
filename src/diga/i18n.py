@@ -13,6 +13,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "The second opinion needs Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Hold right ⌘ and speak",
+        "status.auto_without_detector": "Language detection is off ({reason}); dictating in "
+        "Russian only",
         "status.russian_missing": "Russian is recognized by Parakeet; for better Russian "
         "install GigaAM: uv tool install 'diga[ru,parakeet]'",
         "menu.sounds": "Sound",
@@ -51,6 +53,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "Для второго мнения нужен Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Держи правый ⌘ и говори",
+        "status.auto_without_detector": "Определение языка выключено ({reason}); диктовка "
+        "только по-русски",
         "status.russian_missing": "Русский распознаёт Parakeet; для лучшего русского "
         "поставь GigaAM: uv tool install 'diga[ru,parakeet]'",
         "menu.sounds": "Звук",
@@ -88,6 +92,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "A segunda opinião precisa do Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Mantenha o ⌘ direito premido e fale",
+        "status.auto_without_detector": "Deteção de idioma desligada ({reason}); ditado "
+        "só em russo",
         "status.russian_missing": "O russo é reconhecido pelo Parakeet; para um russo "
         "melhor instale o GigaAM: uv tool install 'diga[ru,parakeet]'",
         "menu.sounds": "Som",

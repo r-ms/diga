@@ -14,10 +14,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - name: Tests
-        run: uv sync --group dev && uv run pytest
+        run: uv sync --no-default-groups --group dev && uv run --no-sync pytest
       - name: Version matches the tag
         run: |
-          version=$(uv run python -c "import diga; print(diga.__version__)")
+          version=$(uv run --no-sync python -c "import diga; print(diga.__version__)")
           test "v$version" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME ≠ version $version"; exit 1; }
       - name: Build
         run: uv build

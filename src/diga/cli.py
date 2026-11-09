@@ -44,7 +44,7 @@ def cmd_run(args: argparse.Namespace) -> int:
 
 def cmd_doctor(_args: argparse.Namespace) -> int:
     from . import models
-    from .asr import BACKENDS
+    from .asr import BACKENDS, installed
     from .permissions import host_app, run_checks
 
     cfg = load_config()
@@ -57,14 +57,7 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
         print(f"  {mark} {check.name}" + (f" — {check.detail}" if check.ok is not True else ""))
     print("\nRecognizers")
     for backend, (extra, langs) in BACKENDS.items():
-        module = {"gigaam": "transformers", "parakeet": "parakeet_mlx", "whisper": "mlx_whisper"}[
-            backend
-        ]
-        try:
-            __import__(module)
-            state = "installed"
-        except ImportError:
-            state = f"not installed (diga[{extra}])"
+        state = "installed" if installed(backend) else f"not installed (diga[{extra}])"
         print(f"  {backend:<9} {state:<34} {langs}")
     if cfg.language == "auto":
         russian = cfg.backend_for("ru") + (" + second opinion" if cfg.second_opinion else "")
