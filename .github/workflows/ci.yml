@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest  # Apple Silicon: the same platform diga targets
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install (no model extras — unit tests never load a model)
+        run: uv sync --group dev
+      - name: Lint
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Type-check
+        run: uv run pyright
+      - name: Unit tests
+        run: uv run pytest
+      - name: The built package works on its own (data files included)
+        run: |
+          uv build --wheel
+          uv venv /tmp/wheel-check
+          uv pip install --python /tmp/wheel-check dist/*.whl
+          /tmp/wheel-check/bin/python -c "
+          from diga import sounds
+          from diga.terms.glossary import example_glossary_text
+          missing = [n for n in sounds.SETS if not sounds.resolve(n).done]
+          assert not missing, f'sound sets missing from the package: {missing}'
+          assert 'term:' in example_glossary_text()
+          print('package OK')"

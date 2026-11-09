@@ -1,0 +1,71 @@
+# diga glossary — technical terms the recognizer tends to get wrong.
+#
+# Each entry is the spelling you want (`term`) plus how the recognizer actually hears it
+# (`pron_variants`), per language. Russian uses acoustic matching (it listens for the term in
+# the audio), other languages compare text. Add the misspellings you actually see in the
+# console output; the file is re-read automatically, no restart needed.
+#
+#   - term: Kubernetes
+#     pron_variants:
+#       ru: [кубернетес, кубернетис]
+#       en: [cube ernetes]
+#
+# A plain list instead of a mapping applies to every language.
+
+terms:
+  - term: git
+    pron_variants: {ru: [гит, гид]}
+  - term: GitHub
+    pron_variants: {ru: [гитхаб, гит хаб], en: [git hub, get hub], pt: [git hub]}
+  - term: GitLab
+    pron_variants: {ru: [гитлаб, гит лаб], en: [git lab, get lab], pt: [git lab]}
+  - term: commit
+    pron_variants: {ru: [коммит, комит]}
+  - term: push
+    pron_variants: {ru: [пуш]}
+  - term: merge
+    pron_variants: {ru: [мёрдж, мердж, мёрж]}
+  - term: branch
+    pron_variants: {ru: [бранч]}
+  - term: PR
+    pron_variants: {ru: [пиар, пи ар], en: [p r], pt: [pê erre]}
+  - term: endpoint
+    pron_variants: {ru: [эндпоинт, ендпоинт]}
+  - term: API
+    pron_variants: {ru: [апи, эйпиай, эй пи ай]}
+  - term: JSON
+    pron_variants: {ru: [джейсон, джсон], en: [jason], pt: [jason]}
+  - term: YAML
+    pron_variants: {ru: [ямл, ямль], en: [yamel], pt: [iamel]}
+  - term: Docker
+    pron_variants: {ru: [докер, докир]}
+  - term: Kubernetes
+    pron_variants: {ru: [кубернетес, кубернетис, губернетис], en: [cube ernetes]}
+  - term: Redis
+    pron_variants: {ru: [редис, рэдис]}
+  - term: PostgreSQL
+    pron_variants: {ru: [постгрес, постгрескьюэль], en: [postgres q l, post gress], pt: [postgres]}
+  - term: Python
+    pron_variants: {ru: [пайтон, питон]}
+  - term: TypeScript
+    pron_variants: {ru: [тайпскрипт, тайп скрипт], en: [type script], pt: [type script]}
+  - term: npm
+    pron_variants: {ru: [энпиэм, нпм]}
+  - term: LLM
+    pron_variants: {ru: [эл эл эм, лэлэм, ллм]}
+  - term: MCP
+    pron_variants: {ru: [эм си пи, эмсипи]}
+  - term: Claude
+    pron_variants: {ru: [клод, клауд], en: [cloud, clod], pt: [clóde, claude]}
+  - term: Claude Code
+    pron_variants: {ru: [клод код, клауд код], en: [cloud code], pt: [cloud code]}
+  - term: Cursor
+    pron_variants: {ru: [курсор, кёрсор]}
+  - term: ollama
+    pron_variants: {ru: [оллама, олама, аллама], en: [o llama, oh llama], pt: [o lama]}
+  - term: vLLM
+    pron_variants: {ru: [виллм, вилм, виллум]}
+  - term: iTerm
+    pron_variants: {ru: [айтерм, айтёрм], en: [i term, eye term], pt: [i term]}
+  - term: macOS
+    pron_variants: {ru: [макос, мак ос], en: [mac os], pt: [mac os]}

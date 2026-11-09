@@ -1,0 +1,29 @@
+name: Bug report
+description: Something doesn't work or the text came out wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you said, what was typed, what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `diga doctor`
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: verbose
+    attributes:
+      label: Output of `diga -v` for the problem dictation (if it is about recognition)
+      description: Shows what each recognizer heard and which terms were replaced. Remove anything private.
+      render: text
+  - type: input
+    id: mac
+    attributes:
+      label: Mac and macOS version
+      placeholder: MacBook Pro M3, macOS 15.1

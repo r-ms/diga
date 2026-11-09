@@ -1,0 +1,93 @@
+[project]
+name = "diga"
+version = "0.1.0"
+description = "Offline push-to-talk dictation for macOS: hold a key, speak, and the text is typed into the focused app. Built for talking to coding agents in the terminal."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Mikhail Rakutko" }]
+requires-python = ">=3.11,<3.14"
+keywords = ["dictation", "speech-to-text", "asr", "push-to-talk", "macos", "gigaam", "parakeet", "whisper"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: MacOS X",
+    "Intended Audience :: Developers",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+dependencies = [
+    "numpy>=1.26",
+    "sounddevice>=0.4.6",
+    "rumps>=0.4",
+    "pyobjc-framework-Quartz>=10",
+    "pyobjc-framework-AVFoundation>=10",
+    "PyYAML>=6",
+    "huggingface-hub>=0.24",
+]
+
+[project.optional-dependencies]
+# Russian: GigaAM v3 (transcription) + GigaAM CTC (acoustic term correction).
+ru = [
+    "torch>=2.3",
+    "torchaudio>=2.3",
+    # 5.x breaks loading GigaAM's remote code (meta-device init vs. its FeatureExtractor).
+    "transformers==4.57.6",
+    "hydra-core>=1.3",
+    "omegaconf>=2.3",
+    "sentencepiece>=0.2",
+    "onnxruntime>=1.18",
+]
+# English, Portuguese and 23 more European languages on Apple Silicon.
+parakeet = [
+    "parakeet-mlx>=0.7",
+    # Small language model that arbitrates the Russian second opinion. 0.30+ requires
+    # transformers 5, which breaks GigaAM (see the `ru` extra), so stay on 0.29.
+    "mlx-lm>=0.29.1,<0.30",
+]
+# Everything else Whisper supports.
+whisper = ["mlx-whisper>=0.4.3"]
+all = ["diga[ru,parakeet,whisper]"]
+
+[project.scripts]
+diga = "diga.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/r-ms/diga"
+Issues = "https://github.com/r-ms/diga/issues"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "pyright>=1.1.380", "pre-commit>=3.7"]
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/diga"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+ignore = [
+    "RUF001", "RUF002", "RUF003",  # Cyrillic glossary data and test phrases are intentional
+    "SIM905",  # stop-word lists read better as one string than as a 100-item list literal
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["models: needs downloaded models and Apple Silicon (run with -m models)"]
+addopts = "-m 'not models'"
+
+[tool.pyright]
+include = ["src", "tests"]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+reportMissingImports = "warning"
+reportMissingModuleSource = false
