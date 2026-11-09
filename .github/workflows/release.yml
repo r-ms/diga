@@ -32,7 +32,7 @@ jobs:
       id-token: write  # trusted publishing
       contents: write  # GitHub release
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: {name: dist, path: dist/}
       - if: vars.PYPI == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
