@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.9] — 2026-11-10
+
+### Fixed
+- A false "can't type into other apps" warning on Macs where Accessibility is granted but the
+  separate "post events" entry is not; either grant is enough to type.
+- Return could become a new line instead of sending the prompt: right after the text, some
+  terminals hand both to the app at once, and Claude Code reads that as a paste. diga now
+  waits 0.12 s before pressing Return.
+
 ## [0.1.8] — 2026-11-10
 
 ### Changed

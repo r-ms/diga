@@ -57,3 +57,14 @@ def test_diga_restarts_once_a_lacking_permission_is_granted_but_not_mid_dictatio
     assert granted == {"keyboard"} and lacked == {"typing"}  # now: restart
     granted, _ = newly_granted({"keyboard"}, ["keyboard"], busy=False)
     assert granted == set()  # still lacking after a restart: no restart loop
+
+
+def test_typing_is_allowed_with_either_macos_grant(monkeypatch):
+    calls = {"CGPreflightPostEventAccess": False}
+    monkeypatch.setattr(permissions, "_bool_fn", lambda lib, name: calls.get(name))
+    monkeypatch.setattr(permissions, "accessibility", lambda: True)
+    assert permissions.can_post_events() is True  # Accessibility alone is enough
+    monkeypatch.setattr(permissions, "accessibility", lambda: False)
+    assert permissions.can_post_events() is False
+    calls["CGPreflightPostEventAccess"] = True
+    assert permissions.can_post_events() is True

@@ -17,6 +17,10 @@ from __future__ import annotations
 import time
 
 RETURN_KEYCODE = 36
+# Return must arrive on its own. Typed right after the last piece of text, a terminal can hand
+# both to the app in one read, and Claude Code takes multi-character input as a paste, in which
+# Return is a new line — the prompt was not sent.
+RETURN_DELAY_S = 0.12
 INJECTED_EVENT_MARK = 0x64696761  # "diga"
 # One key event can carry up to 20 UTF-16 code units. Typing a letter per event (with the pause
 # apps need between events) took ~0.8 s for a 250-character chunk; pieces make it ~20x faster.
@@ -63,6 +67,7 @@ class KeystrokeTyper:
                 time.sleep(self._delay)
 
     def press_return(self) -> None:
+        time.sleep(RETURN_DELAY_S)
         for down in (True, False):
             self._post(self._event(RETURN_KEYCODE, down))
 

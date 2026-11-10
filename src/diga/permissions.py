@@ -44,8 +44,19 @@ def input_monitoring() -> bool | None:
 
 
 def can_post_events() -> bool | None:
-    """Whether this process may send key events to other apps (Accessibility)."""
-    return _bool_fn(_CG, "CGPreflightPostEventAccess")
+    """Whether this process may send key events to other apps.
+
+    macOS has two grants that allow it — "post events" and Accessibility — and typing works with
+    either. Checking only the first gave a false "can't type" warning on Macs where diga (or the
+    terminal) had Accessibility but no separate post-events entry.
+    """
+    post = _bool_fn(_CG, "CGPreflightPostEventAccess")
+    if post:
+        return True
+    trusted = accessibility()
+    if trusted:
+        return True
+    return False if (post is False or trusted is False) else None
 
 
 # System Settings → Privacy & Security panes, opened from the menu warning.
