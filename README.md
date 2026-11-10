@@ -170,10 +170,10 @@ The [architecture notes](docs/architecture.md) explain each step and the design 
 
 ## Troubleshooting
 
-- **Nothing happens when you hold the key.** The menu shows ⚠ with what macOS has not allowed;
-  click it to open the right page of System Settings and turn **diga** on (in Input Monitoring
-  and Accessibility; run from a terminal, it is the terminal app instead). diga picks the
-  permission up by itself, no restart needed. `diga doctor` lists what is missing.
+- **Nothing happens when you hold the key.** The menu shows ⚠ with what is missing ("No keyboard
+  access — open Settings…"). Click it, turn **diga** on in the page that opens (Input Monitoring,
+  Accessibility or Microphone; run from a terminal, it is the terminal app instead), and diga
+  restarts itself as soon as macOS allows it. `diga doctor` lists what is missing.
 - **What is diga doing?** Menu → Show log, or `diga logs -f` in a terminal. What you dictated is
   never written there.
 - **`brew upgrade diga` says the latest version is installed.** Homebrew refreshes its formulas
