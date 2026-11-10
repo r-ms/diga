@@ -7,7 +7,7 @@ from typing import Protocol
 import numpy as np
 
 from ..asr.base import Transcript
-from .glossary import GlossaryFile, Term, ensure_glossary, load_glossary
+from .glossary import GlossaryFile, Term, ensure_glossary, load_glossary, merge_terms
 
 __all__ = [
     "ByLanguage",
@@ -17,6 +17,7 @@ __all__ = [
     "Term",
     "ensure_glossary",
     "load_glossary",
+    "merge_terms",
 ]
 
 

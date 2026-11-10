@@ -105,16 +105,24 @@ how disagreements were settled and which terms were replaced.
 
 ### Glossary
 
-`~/.config/diga/glossary.yaml` starts from [an example](src/diga/data/glossary.example.yaml)
-with common developer terms. Add a term and the ways the recognizer actually writes it:
+diga already knows about 30 common developer terms ([the built-in list](src/diga/data/glossary.builtin.yaml):
+git, GitHub, Docker, Redis, Kubernetes, ollama, Claude Code…); they come with diga and are
+updated with it. Menu → Open glossary opens your own `~/.config/diga/glossary.yaml` in your text
+editor — it starts as a short template. Add your terms and the ways the recognizer actually
+writes them (`diga -v` shows every chunk), per language or as one list for all:
 
 ```yaml
 terms:
-  - term: Kubernetes
+  - term: Grafana
     pron_variants:
-      ru: [кубернетес, кубернетис]
-      en: [cube ernetes]
+      ru: [графана, графона]
+      en: [graph ana]
+  - term: Mikhail
+    pron_variants: [michael, mikael]
 ```
+
+A built-in term listed again gets your spellings as well; `use_builtin: false` keeps only
+yours. Changes apply to the next dictation.
 
 ### Configuration
 

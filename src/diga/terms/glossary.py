@@ -1,5 +1,10 @@
 """The glossary: terms to fix and how people actually pronounce them.
 
+Two parts. diga ships about 30 common developer terms (``data/glossary.builtin.yaml``), which
+always apply and are updated with diga. Your own file, ``~/.config/diga/glossary.yaml``, starts
+as a short template (``data/glossary.template.yaml``) and holds only your terms; a term in both
+gets the variants of both, and ``use_builtin: false`` in your file turns the built-in part off.
+
 ``glossary.yaml``::
 
     terms:
@@ -57,26 +62,60 @@ def load_glossary(path: Path) -> list[Term]:
         return parse_glossary(yaml.safe_load(f) or {})
 
 
-def example_glossary_text() -> str:
-    return resources.files("diga").joinpath("data/glossary.example.yaml").read_text("utf-8")
+def _data(name: str) -> str:
+    return resources.files("diga").joinpath(f"data/{name}").read_text("utf-8")
+
+
+def builtin_glossary_text() -> str:
+    return _data("glossary.builtin.yaml")
+
+
+def template_glossary_text() -> str:
+    return _data("glossary.template.yaml")
+
+
+def builtin_terms() -> list[Term]:
+    return parse_glossary(yaml.safe_load(builtin_glossary_text()) or {})
+
+
+def merge_terms(*groups: list[Term]) -> list[Term]:
+    """Terms of all groups, in order; a term repeated (any case) gets the variants of all.
+
+    The spelling of the last occurrence wins: your "Github" overrides the built-in "GitHub".
+    """
+    merged: dict[str, Term] = {}
+    for group in groups:
+        for t in group:
+            key = t.term.casefold()
+            old = merged.get(key)
+            if old is None:
+                merged[key] = t
+                continue
+            variants = dict(old.variants)
+            for lang, vs in t.variants.items():
+                variants[lang] = tuple(dict.fromkeys(variants.get(lang, ()) + vs))
+            merged[key] = Term(t.term, variants)
+    return list(merged.values())
 
 
 def ensure_glossary(path: Path) -> Path:
-    """Create ``path`` from the bundled example if it does not exist yet."""
+    """Create ``path`` from the template if it does not exist yet (an existing file is kept)."""
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(example_glossary_text(), encoding="utf-8")
-        log.info("created %s from the example glossary", path)
+        path.write_text(template_glossary_text(), encoding="utf-8")
+        log.info("created %s — add your own terms there", path)
     return path
 
 
 class GlossaryFile:
-    """Glossary that reloads itself when the file's modification time changes."""
+    """Built-in terms plus your file, reloaded when the file's modification time changes."""
 
-    def __init__(self, path: Path) -> None:
+    def __init__(self, path: Path, builtin: bool = True) -> None:
         self.path = path
+        self._builtin = builtin_terms() if builtin else []
         self._mtime: float | None = None
-        self.terms: list[Term] = []
+        self.own: list[Term] = []
+        self.terms: list[Term] = list(self._builtin)
         self.version = 0  # bumps on every successful reload
         self.refresh()
 
@@ -90,10 +129,15 @@ class GlossaryFile:
             return False
         self._mtime = mtime
         try:
-            self.terms = load_glossary(self.path)
+            with self.path.open(encoding="utf-8") as f:
+                doc = yaml.safe_load(f) or {}
+            own = parse_glossary(doc)
         except Exception as e:
             log.warning("glossary reload failed, keeping the previous one: %s", e)
             return False
+        use_builtin = doc.get("use_builtin", True) is not False
+        self.own = own
+        self.terms = merge_terms(self._builtin if use_builtin else [], own)
         self.version += 1
-        log.info("glossary: %d terms", len(self.terms))
+        log.info("glossary: %d terms (%d of them yours)", len(self.terms), len(own))
         return True

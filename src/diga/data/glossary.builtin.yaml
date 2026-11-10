@@ -1,16 +1,5 @@
-# diga glossary — technical terms the recognizer tends to get wrong.
-#
-# Each entry is the spelling you want (`term`) plus how the recognizer actually hears it
-# (`pron_variants`), per language. Russian uses acoustic matching (it listens for the term in
-# the audio), other languages compare text. Add the misspellings you actually see in the
-# console output; the file is re-read automatically, no restart needed.
-#
-#   - term: Kubernetes
-#     pron_variants:
-#       ru: [кубернетес, кубернетис]
-#       en: [cube ernetes]
-#
-# A plain list instead of a mapping applies to every language.
+# Built-in terms, shipped with diga and updated with it. They always apply (unless your
+# glossary says `use_builtin: false`). Add your own in ~/.config/diga/glossary.yaml.
 
 terms:
   - term: git

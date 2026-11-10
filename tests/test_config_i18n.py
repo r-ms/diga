@@ -7,7 +7,7 @@ import pytest
 from diga import i18n
 from diga.asr.base import words_from_tokens
 from diga.config import load_config
-from diga.terms.glossary import example_glossary_text, parse_glossary
+from diga.terms.glossary import builtin_glossary_text, parse_glossary
 
 
 def test_defaults_need_no_choices_and_yaml_overrides_them(isolated_config):
@@ -48,8 +48,8 @@ def test_ui_language_falls_back_to_english():
     assert i18n.t("menu.quit") == "Quit"
 
 
-def test_example_glossary_is_valid():
-    terms = parse_glossary(__import__("yaml").safe_load(example_glossary_text()))
+def test_builtin_glossary_is_valid():
+    terms = parse_glossary(__import__("yaml").safe_load(builtin_glossary_text()))
     assert len(terms) > 10 and any(t.term == "GitHub" for t in terms)
 
 

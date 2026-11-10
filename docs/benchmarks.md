@@ -29,7 +29,7 @@ parallel.
 
 Twenty Russian sentences of the kind you say to a coding agent, with 29 English technical terms
 ("Сделай коммит и пуш в гит", "Подними докер с редисом и постгресом"…), spoken by the macOS voice
-*Milena*, recognized by GigaAM v3, corrected with the [example glossary](../src/diga/data/glossary.example.yaml).
+*Milena*, recognized by GigaAM v3, corrected with the [built-in glossary](../src/diga/data/glossary.builtin.yaml).
 *Terms right* counts expected terms spelled correctly in the output; *false replacements* counts
 words a corrector introduced that were not expected terms.
 

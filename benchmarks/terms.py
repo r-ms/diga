@@ -110,7 +110,9 @@ def load_engines() -> tuple[Any, dict[str, Any], dict[str, tuple[Any, Any]]]:
     cfg = Config(language="ru")
     glossary_path = Path(__file__).parent / "results" / "glossary.bench.yaml"
     glossary_path.unlink(missing_ok=True)
-    glossary = GlossaryFile(ensure_glossary(glossary_path))  # the bundled example glossary
+    glossary = GlossaryFile(
+        ensure_glossary(glossary_path)
+    )  # the built-in terms (template is empty)
     asr = create_transcriber("ru", cfg)
     asr.warmup()
     ctc = GigaAMCtc.from_hub(cfg.terms.ctc_precision)

@@ -177,7 +177,8 @@ class MenuBar:
 
     def _clicked_glossary(self, _sender: object) -> None:
         if self._glossary_path:
-            subprocess.Popen(["open", self._glossary_path])
+            # -t: the default text editor; a .yaml file may otherwise open in Xcode or nowhere
+            subprocess.Popen(["open", "-t", self._glossary_path])
 
     def _clicked_quit(self, _sender: object) -> None:
         if self._on_quit:

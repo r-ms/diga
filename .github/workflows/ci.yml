@@ -28,8 +28,8 @@ jobs:
           uv pip install --python /tmp/wheel-check dist/*.whl
           /tmp/wheel-check/bin/python -c "
           from diga import sounds
-          from diga.terms.glossary import example_glossary_text
+          from diga.terms.glossary import builtin_terms, template_glossary_text
           missing = [n for n in sounds.SETS if not sounds.resolve(n).done]
           assert not missing, f'sound sets missing from the package: {missing}'
-          assert 'term:' in example_glossary_text()
+          assert len(builtin_terms()) > 20 and 'terms:' in template_glossary_text()
           print('package OK')"

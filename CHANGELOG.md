@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.4] — 2026-11-10
+
+### Changed
+- The common developer terms are built into diga and updated with it; your
+  `~/.config/diga/glossary.yaml` starts as a short template and holds only your own terms
+  (a term in both gets both sets of spellings; `use_builtin: false` keeps only yours).
+  An existing glossary is kept as it is.
+- Menu → Open glossary always opens the file in your text editor.
+
 ## [0.1.3] — 2026-11-10
 
 ### Changed

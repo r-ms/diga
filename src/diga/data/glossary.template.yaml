@@ -1,0 +1,23 @@
+# Your diga glossary — words the recognizer gets wrong, and how it writes them.
+#
+# diga already knows about 30 common developer terms (git, GitHub, Docker, Redis, Kubernetes,
+# ollama, Claude Code…), so you don't need to list those. Add your own below: your projects,
+# colleagues, tools. Copy the wrong spellings you see in diga's output (`diga -v` shows
+# every chunk). Changes apply to the next dictation, no restart needed.
+#
+# Each entry is the spelling you want and how the recognizer writes it, per language
+# (ru, en, pt, …) or as one list for every language:
+#
+#   - term: Grafana
+#     pron_variants:
+#       ru: [графана, графона]
+#       en: [graph ana]
+#
+#   - term: Mikhail
+#     pron_variants: [michael, mikael]
+#
+# A built-in term listed again here gets your spellings in addition to the built-in ones.
+# To use only your own terms, remove the # in front of the next line:
+# use_builtin: false
+
+terms:

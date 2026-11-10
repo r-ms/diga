@@ -10,7 +10,7 @@ import pytest
 from diga.asr.base import Transcript, Word
 from diga.terms.acoustic import AcousticCorrector, spellings
 from diga.terms.fuzzy import FuzzyCorrector
-from diga.terms.glossary import GlossaryFile, parse_glossary
+from diga.terms.glossary import GlossaryFile, ensure_glossary, parse_glossary
 from diga.terms.spans import Replacement, apply_replacements
 from diga.terms.spotter import Trie, spot
 
@@ -55,7 +55,7 @@ class FakeCtc:
 def glossary_file(tmp_path: Path, text: str) -> GlossaryFile:
     path = tmp_path / "glossary.yaml"
     path.write_text(text, encoding="utf-8")
-    return GlossaryFile(path)
+    return GlossaryFile(path, builtin=False)  # only the terms the test writes
 
 
 GLOSSARY = """
@@ -346,3 +346,41 @@ def test_by_language_prefetches_for_the_language_of_the_previous_chunk():
     fix.correct(audio, Transcript("пуш", language="ru"))
     prefetch(fix, audio)
     assert (default.prefetched, ru.prefetched) == (1, 1)
+
+
+# --- built-in terms + your own file -----------------------------------------------------
+
+
+def test_a_fresh_glossary_is_a_template_and_the_built_in_terms_still_apply(tmp_path):
+    from diga.terms.glossary import builtin_terms
+
+    path = ensure_glossary(tmp_path / "glossary.yaml")
+    assert (
+        "use_builtin" in path.read_text() and "- term:" not in path.read_text().split("terms:")[-1]
+    )
+    glossary = GlossaryFile(path)
+    assert glossary.own == []
+    assert {t.term for t in glossary.terms} == {t.term for t in builtin_terms()}
+    assert any(t.term == "Docker" for t in glossary.terms)
+
+
+def test_your_terms_join_the_built_in_ones_and_add_spellings(tmp_path):
+    path = tmp_path / "glossary.yaml"
+    path.write_text(
+        "terms:\n"
+        "  - term: Grafana\n    pron_variants: {ru: [графана]}\n"
+        "  - term: docker\n    pron_variants: {ru: [доккер]}\n",
+        encoding="utf-8",
+    )
+    glossary = GlossaryFile(path)
+    by_name = {t.term.casefold(): t for t in glossary.terms}
+    assert "grafana" in by_name
+    docker = by_name["docker"]
+    assert docker.term == "docker"  # your spelling wins
+    assert "доккер" in docker.variants["ru"] and "докер" in docker.variants["ru"]  # both kept
+
+
+def test_use_builtin_false_keeps_only_your_terms(tmp_path):
+    path = tmp_path / "glossary.yaml"
+    path.write_text("use_builtin: false\nterms:\n  - term: Grafana\n", encoding="utf-8")
+    assert [t.term for t in GlossaryFile(path).terms] == ["Grafana"]
