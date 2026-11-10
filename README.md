@@ -11,6 +11,10 @@ key and the prompt is sent.
 
 *Diga* is Portuguese for "go ahead, I'm listening" — how people answer the phone in Portugal.
 
+```bash
+brew install r-ms/tools/diga && diga models --download default && brew services start diga
+```
+
 <!-- docs/demo.gif — hold right ⌘ → speak → Claude Code receives the prompt -->
 
 - **Push-to-talk on the right ⌘.** Hold to dictate; release to type the text and press Return.
@@ -33,26 +37,6 @@ key and the prompt is sent.
   7% to 76% ([details](docs/benchmarks.md)). If you don't, none of it is downloaded or loaded.
 - **Private.** Audio never leaves your Mac; the microphone is open only while you dictate. No
   accounts, no telemetry. Models are downloaded once from Hugging Face.
-
-## Languages
-
-| Language | Recognizer | Download | Term correction |
-|---|---|---|---|
-| Russian | [GigaAM v3](https://huggingface.co/ai-sage/GigaAM-v3) — state-of-the-art open Russian ASR | 450 MB + 225 MB | acoustic + text |
-| English, Portuguese (European) + 23 European languages | [Parakeet TDT 0.6B v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) (MLX) | 2.5 GB | text |
-| Everything else Whisper knows | [Whisper large-v3-turbo](https://huggingface.co/mlx-community/whisper-large-v3-turbo) (MLX) | 1.6 GB | glossary as prompt + text |
-
-There is no language to pick. Parakeet hears every chunk and detects its language, so English,
-Portuguese and the rest come straight from it. Parakeet v3 was trained on European Portuguese,
-so Portugal's Portuguese is a first-class citizen.
-
-Russian is handled by GigaAM when Russian is among **your languages**: by default the languages
-your Mac shows (System Settings → General → Language & Region, and your keyboard layouts), or
-the list you set yourself — `languages: [ru, en]` in the [configuration](#configuration), or
-`--languages ru,en`. Then a chunk Parakeet writes mostly in Cyrillic is recognized again by
-GigaAM, with Parakeet's version as a second opinion and the Russian term correction. Without
-Russian, diga uses about 1.6 GB of memory instead of 4 GB, and if it hears Russian anyway it
-says once how to turn the Russian recognizer on. To pin one language, set `language: en`.
 
 ## Install
 
@@ -88,6 +72,26 @@ diga autostart install           # optional: start at login
 macOS asks for three permissions for the app that runs diga (your terminal, or Python when it
 runs at login): **Microphone**, **Accessibility** and **Input Monitoring** — the last two to see
 the ⌘ key and to type. `diga doctor` tells you exactly where to switch them on.
+
+## Languages
+
+| Language | Recognizer | Download | Term correction |
+|---|---|---|---|
+| Russian | [GigaAM v3](https://huggingface.co/ai-sage/GigaAM-v3) — state-of-the-art open Russian ASR | 450 MB + 225 MB | acoustic + text |
+| English, Portuguese (European) + 23 European languages | [Parakeet TDT 0.6B v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) (MLX) | 2.5 GB | text |
+| Everything else Whisper knows | [Whisper large-v3-turbo](https://huggingface.co/mlx-community/whisper-large-v3-turbo) (MLX) | 1.6 GB | glossary as prompt + text |
+
+There is no language to pick. Parakeet hears every chunk and detects its language, so English,
+Portuguese and the rest come straight from it. Parakeet v3 was trained on European Portuguese,
+so Portugal's Portuguese is a first-class citizen.
+
+Russian is handled by GigaAM when Russian is among **your languages**: by default the languages
+your Mac shows (System Settings → General → Language & Region, and your keyboard layouts), or
+the list you set yourself — `languages: [ru, en]` in the [configuration](#configuration), or
+`--languages ru,en`. Then a chunk Parakeet writes mostly in Cyrillic is recognized again by
+GigaAM, with Parakeet's version as a second opinion and the Russian term correction. Without
+Russian, diga uses about 1.6 GB of memory instead of 4 GB, and if it hears Russian anyway it
+says once how to turn the Russian recognizer on. To pin one language, set `language: en`.
 
 ## Use
 

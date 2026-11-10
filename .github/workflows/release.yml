@@ -38,4 +38,17 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
       - name: GitHub release
         env: {GH_TOKEN: "${{ github.token }}"}
-        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --generate-notes
+        run: |
+          cat > notes.md <<'EOF'
+          ## Install
+
+          ```bash
+          brew install r-ms/tools/diga
+          diga models --download default   # once: Python packages and models
+          brew services start diga         # start now and at every login
+          ```
+
+          Upgrade: `brew upgrade diga`. Without Homebrew: `curl -LsSf https://raw.githubusercontent.com/r-ms/diga/main/install.sh | sh`.
+          What changed: [CHANGELOG](https://github.com/r-ms/diga/blob/main/CHANGELOG.md).
+          EOF
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --notes-file notes.md --generate-notes
