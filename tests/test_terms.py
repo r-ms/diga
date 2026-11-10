@@ -303,10 +303,8 @@ def test_acoustic_model_starts_before_recognition_ends_and_runs_once(tmp_path):
     tok = CharTokenizer()
     tok.encode("гитлаб")
     ctc = CountingCtc(emit(tok, "гитлаб", at=12), tok)
-    corrector = ChainCorrector(
-        AcousticCorrector(ctc, glossary_file(tmp_path, GLOSSARY)),
-        FuzzyCorrector(glossary_file(tmp_path, GLOSSARY), "ru"),
-    )
+    acoustic = AcousticCorrector(ctc, glossary_file(tmp_path, GLOSSARY))
+    corrector = ChainCorrector(acoustic, FuzzyCorrector(glossary_file(tmp_path, GLOSSARY), "ru"))
     audio = np.zeros(16_000)
     prefetch(corrector, audio)  # the recorder does this before transcribing
     transcript = Transcript(
@@ -318,7 +316,8 @@ def test_acoustic_model_starts_before_recognition_ends_and_runs_once(tmp_path):
     other = np.zeros(8_000)  # a prefetch for another chunk is not reused by mistake
     prefetch(corrector, other)
     corrector.correct(audio, transcript)
-    assert ctc.runs == 3
+    acoustic._pool.shutdown(wait=True)  # let the stale background run finish before counting
+    assert ctc.runs == 3  # 1 + the stale prefetch + a fresh run for this chunk
 
 
 def test_by_language_prefetches_for_the_language_of_the_previous_chunk():
