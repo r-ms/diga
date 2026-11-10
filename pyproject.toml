@@ -1,6 +1,6 @@
 [project]
 name = "diga"
-version = "0.1.6"
+version = "0.1.7"
 description = "Offline push-to-talk dictation for macOS: hold a key, speak, and the text is typed into the focused app. Built for talking to coding agents in the terminal."
 readme = "README.md"
 license = "MIT"

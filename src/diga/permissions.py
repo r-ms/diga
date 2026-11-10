@@ -131,6 +131,8 @@ def secure_input_holder() -> tuple[int, str] | None:
 
 def host_app() -> str:
     """Best guess of the app the permissions must be granted to."""
+    if os.environ.get("DIGA_APP"):  # started by diga.app (the Homebrew service)
+        return "diga"
     term = os.environ.get("TERM_PROGRAM", "")
     return {
         "iTerm.app": "iTerm2",

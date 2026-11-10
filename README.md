@@ -170,8 +170,8 @@ The [architecture notes](docs/architecture.md) explain each step and the design 
 ## Troubleshooting
 
 - **Nothing happens when you hold the key.** The menu shows ⚠ with what macOS has not allowed;
-  click it to open the right page of System Settings. Started by `brew services`, diga appears
-  there as **Python** (in Input Monitoring and Accessibility). Turn it on: diga connects to the
+  click it to open the right page of System Settings and turn **diga** on (in Input Monitoring
+  and Accessibility; run from a terminal, it is the terminal app instead). diga connects to the
   keyboard by itself. Menu → Show log (or `diga logs`) shows what diga is doing; what you
   dictated is never written there.
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>diga</string>
+  <key>CFBundleDisplayName</key><string>diga</string>
+  <key>CFBundleIdentifier</key><string>io.github.diga</string>
+  <key>CFBundleExecutable</key><string>diga</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <!-- The launcher's version, not diga's: an unchanged bundle keeps the same signature, so
+       macOS keeps its permissions across `brew upgrade`. -->
+  <key>CFBundleShortVersionString</key><string>1</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>LSMinimumSystemVersion</key><string>14.0</string>
+  <key>LSUIElement</key><true/>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>diga listens only while you hold the dictation key and recognizes your speech on this Mac — nothing is sent anywhere.</string>
+</dict>
+</plist>

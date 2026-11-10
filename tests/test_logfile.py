@@ -36,3 +36,11 @@ def test_missing_reports_the_keyboard_first(monkeypatch):
     monkeypatch.setattr(permissions, "microphone", lambda: None)  # not asked yet is not missing
     assert permissions.missing() is None
     assert set(permissions.SETTINGS_URL) == {"keyboard", "typing", "microphone"}
+
+
+def test_started_by_the_app_diga_names_itself(monkeypatch):
+    monkeypatch.setenv("DIGA_APP", "1")
+    assert permissions.host_app() == "diga"
+    monkeypatch.delenv("DIGA_APP")
+    monkeypatch.setenv("TERM_PROGRAM", "Apple_Terminal")
+    assert permissions.host_app() == "Terminal"

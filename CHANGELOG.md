@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.7] — 2026-11-10
+
+### Changed
+- The Homebrew service runs as a small `diga.app`, so macOS asks for the microphone, Input
+  Monitoring and Accessibility in diga's name — not "Python 3.12" — and shows why it needs the
+  microphone. The bundle does not change between versions, so the permissions survive upgrades.
+
 ## [0.1.6] — 2026-11-10
 
 ### Fixed
