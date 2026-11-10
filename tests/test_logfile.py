@@ -44,3 +44,16 @@ def test_started_by_the_app_diga_names_itself(monkeypatch):
     monkeypatch.delenv("DIGA_APP")
     monkeypatch.setenv("TERM_PROGRAM", "Apple_Terminal")
     assert permissions.host_app() == "Terminal"
+
+
+def test_diga_restarts_once_a_lacking_permission_is_granted_but_not_mid_dictation():
+    from diga.app import newly_granted
+
+    granted, lacked = newly_granted(set(), ["keyboard", "typing"], busy=False)
+    assert granted == set() and lacked == {"keyboard", "typing"}  # first look: nothing granted
+    granted, lacked = newly_granted(lacked, ["typing"], busy=True)
+    assert granted == set() and lacked == {"keyboard", "typing"}  # dictating: wait
+    granted, lacked = newly_granted(lacked, ["typing"], busy=False)
+    assert granted == {"keyboard"} and lacked == {"typing"}  # now: restart
+    granted, _ = newly_granted({"keyboard"}, ["keyboard"], busy=False)
+    assert granted == set()  # still lacking after a restart: no restart loop

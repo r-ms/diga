@@ -75,15 +75,22 @@ def request_all() -> None:
         pass
 
 
+def missing_all() -> list[str]:
+    """Everything diga is not allowed to do, most important first."""
+    out = []
+    if input_monitoring() is False:
+        out.append("keyboard")
+    if can_post_events() is False:
+        out.append("typing")
+    if microphone() is False:
+        out.append("microphone")
+    return out
+
+
 def missing() -> str | None:
     """The first thing diga is not allowed to do: "keyboard", "typing", "microphone" — or None."""
-    if input_monitoring() is False:
-        return "keyboard"
-    if can_post_events() is False:
-        return "typing"
-    if microphone() is False:
-        return "microphone"
-    return None
+    gaps = missing_all()
+    return gaps[0] if gaps else None
 
 
 def microphone() -> bool | None:

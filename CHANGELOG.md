@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.8] — 2026-11-10
+
+### Changed
+- The permission warning in the menu says what is missing ("⚠ No keyboard access — open
+  Settings…"); after you click it, it says what to switch on, and diga restarts itself as soon
+  as macOS grants the permission (never in the middle of a dictation).
+
 ## [0.1.7] — 2026-11-10
 
 ### Changed

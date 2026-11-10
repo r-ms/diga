@@ -14,18 +14,20 @@ STRINGS: dict[str, dict[str, str]] = {
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Hold {key} and speak",
         "menu.show_log": "Show log",
-        "menu.need_keyboard": "⚠ Allow Input Monitoring for {app} — click here",
-        "menu.need_typing": "⚠ Allow Accessibility for {app} — click here",
-        "menu.need_microphone": "⚠ Allow the microphone for {app} — click here",
+        "menu.need_keyboard": "⚠ No keyboard access — open Settings…",
+        "menu.need_typing": "⚠ Can't type into other apps — open Settings…",
+        "menu.need_microphone": "⚠ No microphone access — open Settings…",
+        "menu.waiting_keyboard": "⏳ Turn on {app} in Input Monitoring — I'll restart myself",
+        "menu.waiting_typing": "⏳ Turn on {app} in Accessibility — I'll restart myself",
+        "menu.waiting_microphone": "⏳ Turn on {app} in Microphone — I'll restart myself",
+        "status.granted": "Permission granted ({what}): restarting diga…",
         "status.need_keyboard": "⚠ diga can't see the keyboard. System Settings → Privacy & "
-        "Security → Input Monitoring → turn on {app}. diga connects by itself once it's on.",
+        "Security → Input Monitoring → turn on {app}. diga restarts itself once it's on.",
         "status.need_typing": "⚠ macOS doesn't let diga type. System Settings → Privacy & "
         "Security → Accessibility → turn on {app}.",
         "status.need_microphone": "⚠ diga can't use the microphone. System Settings → Privacy & "
         "Security → Microphone → turn on {app}.",
         "status.keyboard_ready": "Keyboard connected: hold {key} and speak.",
-        "status.restarting": "Input Monitoring is on, but macOS shows the keyboard only to a new "
-        "process: restarting diga…",
         "status.languages": "Your languages: {langs} ({source})",
         "status.from_config": "from your settings",
         "status.from_mac": "from macOS",
@@ -76,19 +78,21 @@ STRINGS: dict[str, dict[str, str]] = {
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Держи {key} и говори",
         "menu.show_log": "Показать журнал",
-        "menu.need_keyboard": "⚠ Разреши «Мониторинг ввода» для {app} — нажми сюда",
-        "menu.need_typing": "⚠ Разреши «Универсальный доступ» для {app} — нажми сюда",
-        "menu.need_microphone": "⚠ Разреши микрофон для {app} — нажми сюда",
+        "menu.need_keyboard": "⚠ Нет доступа к клавиатуре — открыть настройки…",
+        "menu.need_typing": "⚠ Нет права печатать в программах — открыть настройки…",
+        "menu.need_microphone": "⚠ Нет доступа к микрофону — открыть настройки…",
+        "menu.waiting_keyboard": "⏳ Включи {app} в «Мониторинге ввода» — перезапущусь сама",
+        "menu.waiting_typing": "⏳ Включи {app} в «Универсальном доступе» — перезапущусь сама",
+        "menu.waiting_microphone": "⏳ Включи {app} в «Микрофоне» — перезапущусь сама",
+        "status.granted": "Разрешение получено ({what}): перезапускаю diga…",
         "status.need_keyboard": "⚠ diga не видит клавиатуру. Системные настройки → "
-        "Конфиденциальность и безопасность → Мониторинг ввода → включи {app}. diga подключится "
+        "Конфиденциальность и безопасность → Мониторинг ввода → включи {app}. diga перезапустится "
         "сама, как только включишь.",
         "status.need_typing": "⚠ macOS не даёт diga печатать. Системные настройки → "
         "Конфиденциальность и безопасность → Универсальный доступ → включи {app}.",
         "status.need_microphone": "⚠ diga не может включить микрофон. Системные настройки → "
         "Конфиденциальность и безопасность → Микрофон → включи {app}.",
         "status.keyboard_ready": "Клавиатура подключена: держи {key} и говори.",
-        "status.restarting": "«Мониторинг ввода» включён, но macOS показывает клавиатуру только "
-        "новому процессу: перезапускаю diga…",
         "status.languages": "Твои языки: {langs} ({source})",
         "status.from_config": "из настроек",
         "status.from_mac": "из macOS",
@@ -138,18 +142,20 @@ STRINGS: dict[str, dict[str, str]] = {
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "{key}: mantenha premido e fale",
         "menu.show_log": "Mostrar registo",
-        "menu.need_keyboard": "⚠ Permita «Monitorização de entrada» para {app} — clique aqui",
-        "menu.need_typing": "⚠ Permita «Acessibilidade» para {app} — clique aqui",
-        "menu.need_microphone": "⚠ Permita o microfone para {app} — clique aqui",
+        "menu.need_keyboard": "⚠ Sem acesso ao teclado — abrir Definições…",
+        "menu.need_typing": "⚠ Não pode escrever noutras aplicações — abrir Definições…",
+        "menu.need_microphone": "⚠ Sem acesso ao microfone — abrir Definições…",
+        "menu.waiting_keyboard": "⏳ Ligue {app} em «Monitorização de entrada» — reinicio sozinho",
+        "menu.waiting_typing": "⏳ Ligue {app} em «Acessibilidade» — reinicio sozinho",
+        "menu.waiting_microphone": "⏳ Ligue {app} em «Microfone» — reinicio sozinho",
+        "status.granted": "Permissão concedida ({what}): a reiniciar o diga…",
         "status.need_keyboard": "⚠ O diga não vê o teclado. Definições do Sistema → Privacidade e "
-        "Segurança → Monitorização de entrada → ligue {app}. O diga liga-se sozinho.",
+        "Segurança → Monitorização de entrada → ligue {app}. O diga reinicia sozinho.",
         "status.need_typing": "⚠ O macOS não deixa o diga escrever. Definições do Sistema → "
         "Privacidade e Segurança → Acessibilidade → ligue {app}.",
         "status.need_microphone": "⚠ O diga não pode usar o microfone. Definições do Sistema → "
         "Privacidade e Segurança → Microfone → ligue {app}.",
         "status.keyboard_ready": "Teclado ligado: mantenha {key} premido e fale.",
-        "status.restarting": "A «Monitorização de entrada» está ligada, mas o macOS só mostra o "
-        "teclado a um processo novo: a reiniciar o diga…",
         "status.languages": "Os seus idiomas: {langs} ({source})",
         "status.from_config": "das suas definições",
         "status.from_mac": "do macOS",

@@ -84,6 +84,7 @@ class MenuBar:
         self._icon = "loading"
         rumps.events.before_start.register(lambda: self._apply_icon(self._icon))
         self._on_quit: Callable[[], None] | None = None
+        self._on_warning: Callable[[], None] | None = None
         self._on_sounds: Callable[[str], None] | None = None
         self._on_key: Callable[[str], None] | None = None
         self._glossary_path: str | None = None
@@ -153,7 +154,9 @@ class MenuBar:
         sounds: Callable[[str], None] | None = None,
         key: Callable[[str], None] | None = None,
         log_path: str | None = None,
+        warning_clicked: Callable[[], None] | None = None,
     ) -> None:
+        self._on_warning = warning_clicked
         self._on_quit = quit
         self._glossary_path = glossary_path
         self._log_path = log_path
@@ -184,6 +187,8 @@ class MenuBar:
     def _clicked_warning(self, _sender: object) -> None:
         if self._warning_url:
             subprocess.Popen(["open", self._warning_url])
+        if self._on_warning:
+            self._on_warning()
 
     def _clicked_log(self, _sender: object) -> None:
         if self._log_path:

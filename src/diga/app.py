@@ -7,7 +7,6 @@ import os
 import signal
 import sys
 import threading
-import time
 from collections.abc import Callable
 
 from .asr import MissingBackend, Transcriber, create_transcriber, installed
@@ -19,8 +18,7 @@ from .permissions import (
     SETTINGS_URL,
     can_post_events,
     host_app,
-    input_monitoring,
-    missing,
+    missing_all,
     request_all,
 )
 from .recorder import Recorder
@@ -99,6 +97,7 @@ class App:
         self.menu = None
         self.recorder: Recorder | None = None
         self._missing_shown: str | None = None
+        self._waiting = False  # the user opened System Settings from the warning
 
     # --- engine (recognizer + corrector) ---
 
@@ -207,35 +206,47 @@ class App:
         if what == self._missing_shown:
             return
         self._missing_shown = what
+        self._waiting = False
         if what:
             log.warning(t(f"status.need_{what}", app=host_app()))
-        if self.menu:
-            text = t(f"menu.need_{what}", app=host_app()) if what else None
-            self.menu.warning(text, SETTINGS_URL.get(what or ""))
+        self._render_warning()
+
+    def _render_warning(self) -> None:
+        if not self.menu:
+            return
+        what = self._missing_shown
+        if not what:
+            self.menu.warning(None)
+        elif self._waiting:  # Settings are open: say what to switch on, and that we follow
+            self.menu.warning(t(f"menu.waiting_{what}", app=host_app()), SETTINGS_URL[what])
+        else:
+            self.menu.warning(t(f"menu.need_{what}"), SETTINGS_URL[what])
+
+    def _warning_clicked(self) -> None:
+        self._waiting = True
+        self._render_warning()
 
     def _watch_permissions(self, hotkeys: HotkeyManager) -> None:
-        """Every 2 s on the main thread: connect to the keyboard once allowed, keep the menu
-        warning up to date. macOS grants permissions while diga runs; no restart needed —
-        except that some versions only let a new process see the keyboard, so if Input
-        Monitoring is on and the tap still fails for a while, diga restarts itself."""
+        """Every 2 s on the main thread: keep the menu warning up to date, and restart diga as
+        soon as macOS grants a permission it lacked — a fresh process sees every permission at
+        once (some macOS versions show the keyboard only to a new process). Never in the middle
+        of a dictation: then it waits for the next tick."""
         import rumps
 
-        state: dict[str, float | None] = {"granted_since": None}
+        state: dict[str, set[str]] = {"lacked": set()}
 
         def tick(_timer: object) -> None:
             if not hotkeys.started and hotkeys.start():
                 log.info(t("status.keyboard_ready", key=t(f"key.{self.cfg.hotkey.key}")))
-            what = missing()
-            if not hotkeys.started:
-                if input_monitoring() is True:
-                    state["granted_since"] = state["granted_since"] or time.monotonic()
-                    waited = time.monotonic() - state["granted_since"]
-                    if waited > 6 and not os.environ.get("DIGA_RESTARTED"):
-                        log.warning(t("status.restarting"))
-                        os.environ["DIGA_RESTARTED"] = "1"  # once: never a restart loop
-                        os.execv(sys.executable, [sys.executable, *sys.argv])
-                what = "keyboard"
-            self._show_missing(what)
+            gaps = missing_all()
+            if not hotkeys.started and "keyboard" not in gaps:
+                gaps.insert(0, "keyboard")  # allowed, yet the keyboard is still not visible
+            busy = self.recorder is not None and self.recorder.recording
+            granted, state["lacked"] = newly_granted(state["lacked"], gaps, busy)
+            if granted:
+                log.info(t("status.granted", what=", ".join(sorted(granted))))
+                restart()
+            self._show_missing(gaps[0] if gaps else None)
 
         tick(None)
         rumps.Timer(tick, 2).start()
@@ -331,6 +342,7 @@ class App:
             self.recorder = self._make_recorder(transcriber, corrector)
             assert self.menu is not None
             self.menu.bind(
+                warning_clicked=self._warning_clicked,
                 quit=shutdown,
                 glossary_path=str(self.glossary.path),
                 log_path=str(LOG_FILE),
@@ -358,3 +370,17 @@ def _on_main_thread(fn: Callable[[], None]) -> None:
     from PyObjCTools import AppHelper
 
     AppHelper.callAfter(fn)
+
+
+def newly_granted(lacked: set[str], gaps: list[str], busy: bool) -> tuple[set[str], set[str]]:
+    """(permissions granted since the last check, what is still lacking).
+
+    While a dictation is running nothing counts as granted yet: the restart waits for it."""
+    if busy:
+        return set(), lacked
+    return lacked - set(gaps), set(gaps)
+
+
+def restart() -> None:
+    """Replace this process with a fresh diga, same arguments (under diga.app too: same PID)."""
+    os.execv(sys.executable, [sys.executable, *sys.argv])
