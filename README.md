@@ -40,38 +40,39 @@ brew install r-ms/tools/diga && diga models --download default && brew services 
 
 ## Install
 
-Requires a Mac with Apple Silicon (M1 or newer) and macOS 14+.
+Requires a Mac with Apple Silicon (M1 or newer) and macOS 14+, and [Homebrew](https://brew.sh).
 
 ```bash
 brew install r-ms/tools/diga
-diga models --download default   # once: diga's Python packages and the models (~3.5 GB)
+diga models --download default   # once: diga's Python packages and the models
 brew services start diga         # start now and at every login
 ```
 
-Or without Homebrew, one command that also installs [uv](https://docs.astral.sh/uv/) if needed,
-downloads the models and starts diga at login:
+Then hold the right ⌘ and speak. Upgrade with `brew upgrade diga`.
+
+macOS asks for three permissions for diga: **Microphone**, **Accessibility** and **Input
+Monitoring** — the last two to see the ⌘ key and to type. `diga doctor` shows what is missing
+and where to switch it on. diga uses about 4 GB of memory with Russian among your languages
+and 1.6 GB without.
+
+<details><summary>Other ways to install (without Homebrew)</summary>
+
+One script that installs [uv](https://docs.astral.sh/uv/) if needed, then diga, the models and
+the login item:
 
 ```bash
 curl -LsSf https://raw.githubusercontent.com/r-ms/diga/main/install.sh | sh
 ```
 
-Then hold the right ⌘ and speak; `diga doctor` checks permissions, recognizers and models.
-diga uses about 4 GB of memory with Russian among your languages and 1.6 GB without.
-
-<details><summary>Step by step with uv</summary>
+Or step by step with uv:
 
 ```bash
 uv tool install "diga[ru,parakeet] @ git+https://github.com/r-ms/diga"   # extras: ru, parakeet, whisper, all
-diga models --download default   # the models your settings use
-diga                             # a speech-bubble icon appears in the menu bar
-diga autostart install           # optional: start at login
+diga models --download default
+diga autostart install           # start at login
 ```
 
 </details>
-
-macOS asks for three permissions for the app that runs diga (your terminal, or Python when it
-runs at login): **Microphone**, **Accessibility** and **Input Monitoring** — the last two to see
-the ⌘ key and to type. `diga doctor` tells you exactly where to switch them on.
 
 ## Languages
 
