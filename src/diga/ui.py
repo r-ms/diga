@@ -2,9 +2,9 @@
 # (PyObjC exposes macOS framework symbols dynamically, so static checkers cannot see them.)
 """Menu-bar icon (rumps) with sounds.
 
-Icon (SF Symbols, follow the light/dark menu bar): hourglass loading · mic ready ·
-red filled mic recording · waveform finishing the last chunk. Sounds (``sounds.py``): start of
-recording, and success once the text is typed. Emoji on macOS without SF Symbols.
+Icon (SF Symbols, follow the light/dark menu bar): hourglass loading · speech bubble ready ·
+red filled bubble recording · bubble with … finishing the last chunk. Emoji on macOS without
+SF Symbols. Sounds (``sounds.py``): start of recording, and success once the text is typed.
 Menu: a hint, the dictation key, the sound set (picking one plays it), open glossary, quit —
 and a warning when macOS does not let diga type. Nothing else to choose: the language is
 detected per chunk and the rest are the best defaults (``~/.config/diga/config.yaml``).
@@ -24,8 +24,15 @@ from .i18n import t
 
 log = logging.getLogger(__name__)
 
-ICONS = {"loading": "⏳", "idle": "🎙️", "rec": "🔴", "asr": "✍️"}  # fallback only
-SYMBOLS = {"loading": "hourglass", "idle": "mic", "rec": "mic.fill", "asr": "waveform"}
+ICONS = {"loading": "⏳", "idle": "💬", "rec": "🔴", "asr": "💭"}  # fallback only
+# A speech bubble, not a microphone: macOS shows its own microphone indicator in the menu bar
+# while any app records, and a second microphone right next to it was easy to mistake for it.
+SYMBOLS = {
+    "loading": "hourglass",
+    "idle": "text.bubble",
+    "rec": "text.bubble.fill",
+    "asr": "ellipsis.bubble",
+}
 
 
 def _symbol_images() -> dict[str, object]:

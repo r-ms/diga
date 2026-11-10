@@ -74,7 +74,7 @@ With every model loaded diga uses about 4 GB of memory (3.7 GB without the langu
 ```bash
 uv tool install "diga[ru,parakeet] @ git+https://github.com/r-ms/diga"   # extras: ru, parakeet, whisper, all
 diga models --download default   # the models your settings use
-diga                             # a microphone icon appears in the menu bar
+diga                             # a speech-bubble icon appears in the menu bar
 diga autostart install           # optional: start at login
 ```
 

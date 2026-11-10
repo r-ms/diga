@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] — 2026-11-10
+
+### Changed
+- Menu-bar icon: a speech bubble (red and filled while recording, with … while finishing)
+  instead of a microphone, which was easy to mistake for macOS's own microphone indicator.
+
 ## [0.1.2] — 2026-11-09
 
 ### Added
