@@ -20,9 +20,11 @@ ui.py (menu bar) ─── app.py wires everything, config.py / i18n.py / permis
 | `terms/` | Glossary, the CTC word spotter, acoustic and text correctors (picked per chunk language in `auto`), and how they choose and apply replacements. |
 | `inject.py` | Types Unicode key events with modifier flags cleared; presses Return. |
 | `ui.py` | Menu-bar icon, a hint, the sound menu, warning when typing is not allowed. |
+| `logfile.py` | The log file `~/Library/Logs/diga/diga.log`, with dictated text replaced by ⋯. |
 | `sounds.py` | Sound sets (built in or your own folder) for start of recording and success. |
 | `app.py` | Builds the recognizer + corrector for a language, wires recorder, hotkeys and menu, handles Ctrl-C. |
 | `config.py` | Dataclass defaults ← `config.yaml` ← menu `settings.json` (the sound) ← CLI. |
+| `macos/` | `diga.app`: a tiny launcher so macOS asks for permissions in diga's name (the Homebrew service runs it). |
 | `models.py` | Model registry: Hugging Face repo, pinned revision, license, size. |
 | `system.py` | The languages this Mac shows (preferred languages, keyboard layouts), used when `languages` is not set. |
 | `permissions.py` | Microphone / Accessibility / Input Monitoring checks for `diga doctor`. |

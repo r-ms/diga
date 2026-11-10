@@ -6,5 +6,6 @@ their own licenses:
 - NVIDIA Parakeet TDT 0.6B v3 (nvidia/parakeet-tdt-0.6b-v3, MLX conversion
   mlx-community/parakeet-tdt-0.6b-v3) — CC-BY-4.0 — https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3
 - OpenAI Whisper large-v3-turbo (MLX conversion mlx-community/whisper-large-v3-turbo) — MIT
+- Qwen3 0.6B (Qwen/Qwen3-0.6B, MLX 4-bit conversion mlx-community/Qwen3-0.6B-4bit) — Apache-2.0
 
 The CTC word-spotting approach follows NeMo's CTC word spotter (Andrusenko et al., 2024).

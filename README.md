@@ -104,6 +104,7 @@ says once how to turn the Russian recognizer on. To pin one language, set `langu
 | Menu → Key | Right ⌘ (default), right ⌥ or Fn (🌐) |
 | Menu → Sound | Soft, Tick, Drop, Chime or Off — you hear each one as you pick it |
 | Menu → Open glossary | Edit your terms; changes apply to the next dictation |
+| Menu → Show log | What diga is doing, in Console (never what you dictated); also `diga logs` |
 
 Left ⌘ is not offered on purpose: ⌘-click and ⌘-drag press no other key, so they would start
 recordings. With Fn (🌐), set System Settings → Keyboard → "Press 🌐 key to" → *Do Nothing*, or
@@ -158,10 +159,10 @@ See [`config.py`](src/diga/config.py) for every setting.
 ## How it works
 
 ```
-right ⌘ ──► recorder ──► chunks at pauses ──► recognizer ──► term correction ──► typed into the
- (hold)     mic open      (energy, no VAD)    GigaAM /        acoustic (ru)       focused app
-            only now                          Parakeet /      + text match        (+ Return)
-                                              Whisper
+hold the key ──► recorder ──► chunks at pauses ──► Parakeet: text + language ──► typed into
+ (right ⌘)       mic open     (10–20 s, energy)     Russian? GigaAM re-hears it,    the focused
+                 only now                           a small LM settles disagreements app (+ Return)
+                                                    then glossary terms are fixed
 ```
 
 The [architecture notes](docs/architecture.md) explain each step and the design decisions;
@@ -171,16 +172,14 @@ The [architecture notes](docs/architecture.md) explain each step and the design 
 
 - **Nothing happens when you hold the key.** The menu shows ⚠ with what macOS has not allowed;
   click it to open the right page of System Settings and turn **diga** on (in Input Monitoring
-  and Accessibility; run from a terminal, it is the terminal app instead). diga connects to the
-  keyboard by itself. Menu → Show log (or `diga logs`) shows what diga is doing; what you
-  dictated is never written there.
-
-- **The icon turns red but nothing is typed.** macOS is not letting the app that runs diga type
-  into other apps: check *System Settings → Privacy & Security → Accessibility* for it (diga shows
-  a warning in the menu) and restart diga. `diga doctor` checks this.
-- **Holding ⌘ does nothing.** Accessibility / Input Monitoring is missing — run `diga doctor`.
-- **First dictation is slow.** The models are downloading; `diga models --download all` fetches
-  them ahead of time.
+  and Accessibility; run from a terminal, it is the terminal app instead). diga picks the
+  permission up by itself, no restart needed. `diga doctor` lists what is missing.
+- **What is diga doing?** Menu → Show log, or `diga logs -f` in a terminal. What you dictated is
+  never written there.
+- **`brew upgrade diga` says the latest version is installed.** Homebrew refreshes its formulas
+  at most once a day: run `brew update` first.
+- **First dictation is slow.** The models are still downloading; `diga models --download default`
+  fetches the ones your settings use ahead of time.
 
 ## How diga compares
 
@@ -195,17 +194,19 @@ As of November 2026; corrections welcome.
 | Custom terms | acoustic spotting (ru) + text matching | text fuzzy matching | phonetic text matching | passed to the model as context |
 
 Handy is the more complete cross-platform app; VoiceInk the more polished native Mac app.
-diga is small (under 3k lines of Python), focused on the terminal and on getting technical
+diga is small (about 4k lines of Python), focused on the terminal and on getting technical
 vocabulary right, and easy to read and change.
 
 ## Development
 
 ```bash
 git clone https://github.com/r-ms/diga && cd diga
-uv sync --all-extras --group dev
+uv sync                       # dev tools and every recognizer
+uv run diga                   # run from the source tree (permissions go to your terminal)
 uv run pytest                 # unit tests, no models needed
 uv run pytest -m models       # end-to-end with real models and macOS voices
 uv run ruff check . && uv run ruff format --check . && uv run pyright
+uv run pre-commit install     # optional: ruff on every commit
 uv run python benchmarks/latency.py
 uv run python benchmarks/terms.py synthetic
 ```
@@ -217,7 +218,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 diga stands on [GigaAM](https://github.com/salute-developers/GigaAM) (Salute Developers, MIT),
 [NVIDIA Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) (CC-BY-4.0) via
 [parakeet-mlx](https://github.com/senstella/parakeet-mlx), [Whisper](https://github.com/openai/whisper)
-via [mlx-whisper](https://github.com/ml-explore/mlx-examples), and the CTC word-spotting idea
+via [mlx-whisper](https://github.com/ml-explore/mlx-examples), [Qwen3](https://huggingface.co/Qwen/Qwen3-0.6B)
+(Apache-2.0) via [mlx-lm](https://github.com/ml-explore/mlx-lm), and the CTC word-spotting idea
 from NeMo (Andrusenko et al., 2024). Models are not bundled; see [NOTICE](NOTICE).
 
 MIT © Mikhail Rakutko
