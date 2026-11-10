@@ -164,8 +164,16 @@ class HotkeyManager:
             self.on_flags(CGEventGetFlags(event), time.monotonic())
         return event
 
+    @property
+    def started(self) -> bool:
+        return self._tap is not None
+
     def start(self) -> bool:
-        """Install the event tap on the main run loop; False without the permission."""
+        """Install the event tap on the main run loop; False without the permission.
+
+        Safe to call again (the app retries until Input Monitoring is granted)."""
+        if self._tap is not None:
+            return True
         from Quartz import (
             CFMachPortCreateRunLoopSource,
             CFRunLoopAddSource,
@@ -191,7 +199,7 @@ class HotkeyManager:
             None,
         )
         if not self._tap:
-            log.warning("could not create the event tap — run `diga doctor` (Accessibility)")
+            self._tap = None
             return False
         source = CFMachPortCreateRunLoopSource(None, self._tap, 0)
         CFRunLoopAddSource(CFRunLoopGetMain(), source, kCFRunLoopCommonModes)

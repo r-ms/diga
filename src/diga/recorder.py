@@ -71,15 +71,12 @@ class _ChunkWorker:
             try:
                 text = self._recognize(chunk)
                 self._texts.append(text)
+                fields = {"i": len(self._texts), "audio": len(chunk) / SAMPLE_RATE}
+                fields["asr"] = time.monotonic() - t0
                 log.log(
                     logging.INFO if text else logging.DEBUG,  # an empty tail is just noise
-                    t(
-                        "status.chunk",
-                        i=len(self._texts),
-                        audio=len(chunk) / SAMPLE_RATE,
-                        asr=time.monotonic() - t0,
-                        text=text if self._log_text else "⋯",
-                    ),
+                    t("status.chunk", **fields, text=text if self._log_text else "⋯"),
+                    extra={"redacted": t("status.chunk", **fields, text="⋯")},  # for the log file
                 )
                 if text:
                     self._deliver(text)

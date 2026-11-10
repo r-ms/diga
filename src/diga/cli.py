@@ -27,6 +27,9 @@ def _setup_logging(verbose: bool) -> None:
         format=fmt,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+    from .logfile import attach
+
+    attach()
     for noisy in ("httpx", "huggingface_hub", "transformers", "urllib3", "filelock", "numba"):
         logging.getLogger(noisy).setLevel(logging.WARNING)
 
@@ -79,6 +82,9 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         route = cfg.backend_for(cfg.language)
     print(f"Language: {cfg.language} → {route}")
     print(f"Glossary: {cfg.glossary_path()}")
+    from .logfile import LOG_FILE
+
+    print(f"Log: {LOG_FILE}  (diga logs, or Menu → Show log)")
     print("\nModels (downloaded on first use)")
     for spec in models.REGISTRY:
         cached = "✓ cached" if models.is_cached(spec) else "  —"
@@ -102,6 +108,22 @@ def cmd_models(args: argparse.Namespace) -> int:
         used = "  (used now)" if spec.key in default else ""
         print(f"  {cached} {spec.key:<28} {spec.repo}{used}")
     return 0
+
+
+def cmd_logs(args: argparse.Namespace) -> int:
+    from .logfile import LOG_FILE
+
+    if not LOG_FILE.exists():
+        print(f"no log yet: {LOG_FILE}")
+        return 1
+    print(f"==> {LOG_FILE}", flush=True)
+    tail = ["tail", "-n", str(args.lines)] + (["-F"] if args.follow else [])
+    import subprocess
+
+    try:
+        return subprocess.call([*tail, str(LOG_FILE)])
+    except KeyboardInterrupt:
+        return 0
 
 
 def cmd_autostart(args: argparse.Namespace) -> int:
@@ -153,6 +175,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="model keys, 'default' (what your settings use) or 'all'",
     )
     models.set_defaults(func=cmd_models)
+    logs = sub.add_parser("logs", help="show diga's log (what you dictated is never in it)")
+    logs.add_argument("-n", "--lines", type=int, default=60)
+    logs.add_argument("-f", "--follow", action="store_true", help="keep printing new lines")
+    logs.set_defaults(func=cmd_logs)
     auto = sub.add_parser("autostart", help="start diga at login")
     auto.add_argument("action", choices=["install", "uninstall"])
     auto.add_argument("--lang", help="language to start with")

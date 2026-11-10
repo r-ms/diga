@@ -103,7 +103,10 @@ class MenuBar:
         self._glossary_item = rumps.MenuItem(
             t("menu.open_glossary"), callback=self._clicked_glossary
         )
-        self._warning_item = rumps.MenuItem("")
+        self._warning_item = rumps.MenuItem("", callback=self._clicked_warning)
+        self._warning_url: str | None = None
+        self._log_path: str | None = None
+        self._log_item = rumps.MenuItem(t("menu.show_log"), callback=self._clicked_log)
         self._quit_item = rumps.MenuItem(t("menu.quit"), callback=self._clicked_quit)
         self._sound_menu = rumps.MenuItem(t("menu.sounds"))
         self._sound_items: dict[str, object] = {}
@@ -126,6 +129,7 @@ class MenuBar:
             self._key_menu,
             self._sound_menu,
             self._glossary_item,
+            self._log_item,
             None,
             self._quit_item,
         ]
@@ -148,9 +152,11 @@ class MenuBar:
         glossary_path: str | None,
         sounds: Callable[[str], None] | None = None,
         key: Callable[[str], None] | None = None,
+        log_path: str | None = None,
     ) -> None:
         self._on_quit = quit
         self._glossary_path = glossary_path
+        self._log_path = log_path
         self._on_sounds = sounds
         self._on_key = key
 
@@ -174,6 +180,14 @@ class MenuBar:
         sounds.play(self._sounds.done)  # let you hear what you picked
         if self._on_sounds:
             self._on_sounds(choice)
+
+    def _clicked_warning(self, _sender: object) -> None:
+        if self._warning_url:
+            subprocess.Popen(["open", self._warning_url])
+
+    def _clicked_log(self, _sender: object) -> None:
+        if self._log_path:
+            subprocess.Popen(["open", "-a", "Console", self._log_path])
 
     def _clicked_glossary(self, _sender: object) -> None:
         if self._glossary_path:
@@ -219,8 +233,9 @@ class MenuBar:
             sounds.play(self._sounds.done)
         self._set_icon(phase if phase in ICONS else "idle")
 
-    def warning(self, text: str | None) -> None:
-        """Show ``text`` as the first menu item, or remove it when ``None``."""
+    def warning(self, text: str | None, url: str | None = None) -> None:
+        """Show ``text`` as the first menu item (clicking opens ``url``), or remove it."""
+        self._warning_url = url
 
         # rumps keys menu items by the title they had when inserted, so keep that key.
         def update() -> None:

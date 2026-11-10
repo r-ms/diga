@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.6] — 2026-11-10
+
+### Fixed
+- Started by `brew services`, diga could miss the keyboard for good: macOS silently refuses
+  Input Monitoring to a background Python, and diga tried to connect only once. diga now asks
+  for every permission at start, retries every 2 s, connects as soon as the permission is on
+  (restarting itself once if macOS requires it), and the menu shows what is missing with a click
+  to the right page of System Settings.
+
+### Added
+- A log file, `~/Library/Logs/diga/diga.log` (never with dictated text): Menu → Show log,
+  `diga logs [-f]`, and its path in `diga doctor`.
+
 ## [0.1.5] — 2026-11-10
 
 ### Added

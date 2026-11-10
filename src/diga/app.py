@@ -7,12 +7,22 @@ import os
 import signal
 import sys
 import threading
+import time
 from collections.abc import Callable
 
 from .asr import MissingBackend, Transcriber, create_transcriber, installed
 from .config import Config, save_setting
+from .hotkeys import HotkeyManager
 from .i18n import t
-from .permissions import can_post_events, host_app
+from .logfile import LOG_FILE
+from .permissions import (
+    SETTINGS_URL,
+    can_post_events,
+    host_app,
+    input_monitoring,
+    missing,
+    request_all,
+)
 from .recorder import Recorder
 from .terms import ByLanguage, ChainCorrector, Corrector, GlossaryFile, ensure_glossary
 
@@ -88,6 +98,7 @@ class App:
         self.glossary = GlossaryFile(ensure_glossary(cfg.glossary_path()))
         self.menu = None
         self.recorder: Recorder | None = None
+        self._missing_shown: str | None = None
 
     # --- engine (recognizer + corrector) ---
 
@@ -188,11 +199,46 @@ class App:
 
     def _check_typing_allowed(self) -> None:
         """Warn when macOS would silently drop diga's typed text (no Accessibility permission)."""
-        allowed = can_post_events()
-        if allowed is False:
-            log.warning(t("status.no_typing", app=host_app()))
+        if can_post_events() is False:
+            self._show_missing("typing")
+
+    def _show_missing(self, what: str | None) -> None:
+        """Log (once per change) and show in the menu what diga is not allowed to do."""
+        if what == self._missing_shown:
+            return
+        self._missing_shown = what
+        if what:
+            log.warning(t(f"status.need_{what}", app=host_app()))
         if self.menu:
-            self.menu.warning(t("menu.no_typing") if allowed is False else None)
+            text = t(f"menu.need_{what}", app=host_app()) if what else None
+            self.menu.warning(text, SETTINGS_URL.get(what or ""))
+
+    def _watch_permissions(self, hotkeys: HotkeyManager) -> None:
+        """Every 2 s on the main thread: connect to the keyboard once allowed, keep the menu
+        warning up to date. macOS grants permissions while diga runs; no restart needed —
+        except that some versions only let a new process see the keyboard, so if Input
+        Monitoring is on and the tap still fails for a while, diga restarts itself."""
+        import rumps
+
+        state: dict[str, float | None] = {"granted_since": None}
+
+        def tick(_timer: object) -> None:
+            if not hotkeys.started and hotkeys.start():
+                log.info(t("status.keyboard_ready", key=t(f"key.{self.cfg.hotkey.key}")))
+            what = missing()
+            if not hotkeys.started:
+                if input_monitoring() is True:
+                    state["granted_since"] = state["granted_since"] or time.monotonic()
+                    waited = time.monotonic() - state["granted_since"]
+                    if waited > 6 and not os.environ.get("DIGA_RESTARTED"):
+                        log.warning(t("status.restarting"))
+                        os.environ["DIGA_RESTARTED"] = "1"  # once: never a restart loop
+                        os.execv(sys.executable, [sys.executable, *sys.argv])
+                what = "keyboard"
+            self._show_missing(what)
+
+        tick(None)
+        rumps.Timer(tick, 2).start()
 
     # --- running ---
 
@@ -239,7 +285,7 @@ class App:
             log.info(t("status.quit"))
 
     def _run_menu_bar(self) -> None:
-        from .hotkeys import DEFAULT_KEY, KEYS, HotkeyManager
+        from .hotkeys import DEFAULT_KEY, KEYS
         from .ui import MenuBar
 
         self.menu = MenuBar(self.cfg.sounds, self.cfg.hotkey.key)
@@ -256,7 +302,8 @@ class App:
             save_setting("hotkey", {"key": key})
             log.info(t("status.key", key=t(f"key.{key}")))
 
-        hotkeys.start()  # must be attached before the run loop starts
+        request_all()  # the macOS prompts, at start rather than in the first dictation
+        hotkeys.start()  # attached before the run loop starts; retried until allowed
 
         # Ctrl-C used to crash inside native code (onnxruntime, CoreAudio) when SIGINT landed
         # on a worker thread. Block it everywhere and handle it on one dedicated thread.
@@ -286,6 +333,7 @@ class App:
             self.menu.bind(
                 quit=shutdown,
                 glossary_path=str(self.glossary.path),
+                log_path=str(LOG_FILE),
                 sounds=lambda choice: save_setting("sounds", choice),
                 key=set_key,
             )
@@ -295,6 +343,7 @@ class App:
                 hold_end=self.recorder.hold_end,
             )
             self.menu.ready()
+            _on_main_thread(lambda: self._watch_permissions(hotkeys))
             send = t("status.ready_send") if self.cfg.send_return_after_hold else ""
             log.info(t("status.ready_hotkeys", send=send, key=t(f"key.{self.cfg.hotkey.key}")))
             self.recorder.run(self.stop)
@@ -303,3 +352,9 @@ class App:
         worker.start()
         threading.Thread(target=sigint_waiter, daemon=True).start()
         self.menu.run()
+
+
+def _on_main_thread(fn: Callable[[], None]) -> None:
+    from PyObjCTools import AppHelper
+
+    AppHelper.callAfter(fn)

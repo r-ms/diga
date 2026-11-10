@@ -13,6 +13,19 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "The second opinion needs Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Hold {key} and speak",
+        "menu.show_log": "Show log",
+        "menu.need_keyboard": "⚠ Allow Input Monitoring for {app} — click here",
+        "menu.need_typing": "⚠ Allow Accessibility for {app} — click here",
+        "menu.need_microphone": "⚠ Allow the microphone for {app} — click here",
+        "status.need_keyboard": "⚠ diga can't see the keyboard. System Settings → Privacy & "
+        "Security → Input Monitoring → turn on {app}. diga connects by itself once it's on.",
+        "status.need_typing": "⚠ macOS doesn't let diga type. System Settings → Privacy & "
+        "Security → Accessibility → turn on {app}.",
+        "status.need_microphone": "⚠ diga can't use the microphone. System Settings → Privacy & "
+        "Security → Microphone → turn on {app}.",
+        "status.keyboard_ready": "Keyboard connected: hold {key} and speak.",
+        "status.restarting": "Input Monitoring is on, but macOS shows the keyboard only to a new "
+        "process: restarting diga…",
         "status.languages": "Your languages: {langs} ({source})",
         "status.from_config": "from your settings",
         "status.from_mac": "from macOS",
@@ -39,10 +52,6 @@ STRINGS: dict[str, dict[str, str]] = {
         "sounds.custom": "Your own ({name})",
         "menu.open_glossary": "Open glossary",
         "menu.quit": "Quit",
-        "menu.no_typing": "⚠ macOS doesn't let diga type — see the console",
-        "status.no_typing": "⚠ macOS doesn't allow {app} to type into other apps. System Settings →"
-        " Privacy & Security → Accessibility → turn {app} on, then restart "
-        "diga.",
         "status.loading": "Loading {model}…",
         "status.ready_hotkeys": "Ready. Hold {key} to dictate, release to insert{send}. "
         "Double-tap {key} for long dictation.",
@@ -66,6 +75,20 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "Для второго мнения нужен Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Держи {key} и говори",
+        "menu.show_log": "Показать журнал",
+        "menu.need_keyboard": "⚠ Разреши «Мониторинг ввода» для {app} — нажми сюда",
+        "menu.need_typing": "⚠ Разреши «Универсальный доступ» для {app} — нажми сюда",
+        "menu.need_microphone": "⚠ Разреши микрофон для {app} — нажми сюда",
+        "status.need_keyboard": "⚠ diga не видит клавиатуру. Системные настройки → "
+        "Конфиденциальность и безопасность → Мониторинг ввода → включи {app}. diga подключится "
+        "сама, как только включишь.",
+        "status.need_typing": "⚠ macOS не даёт diga печатать. Системные настройки → "
+        "Конфиденциальность и безопасность → Универсальный доступ → включи {app}.",
+        "status.need_microphone": "⚠ diga не может включить микрофон. Системные настройки → "
+        "Конфиденциальность и безопасность → Микрофон → включи {app}.",
+        "status.keyboard_ready": "Клавиатура подключена: держи {key} и говори.",
+        "status.restarting": "«Мониторинг ввода» включён, но macOS показывает клавиатуру только "
+        "новому процессу: перезапускаю diga…",
         "status.languages": "Твои языки: {langs} ({source})",
         "status.from_config": "из настроек",
         "status.from_mac": "из macOS",
@@ -92,10 +115,6 @@ STRINGS: dict[str, dict[str, str]] = {
         "sounds.custom": "Свои ({name})",
         "menu.open_glossary": "Открыть словарь",
         "menu.quit": "Выход",
-        "menu.no_typing": "⚠ macOS не даёт diga печатать — подробности в консоли",
-        "status.no_typing": "⚠ macOS не разрешает {app} печатать в другие приложения. Системные "
-        "настройки → Конфиденциальность и безопасность → Универсальный доступ →"
-        " включи {app}, затем перезапусти diga.",
         "status.loading": "Загружаю {model}…",
         "status.ready_hotkeys": "Готово. Держи {key} — диктовка, отпустил — вставка{send}. "
         "Нажми {key} дважды — длинная диктовка.",
@@ -118,6 +137,19 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "A segunda opinião precisa do Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "{key}: mantenha premido e fale",
+        "menu.show_log": "Mostrar registo",
+        "menu.need_keyboard": "⚠ Permita «Monitorização de entrada» para {app} — clique aqui",
+        "menu.need_typing": "⚠ Permita «Acessibilidade» para {app} — clique aqui",
+        "menu.need_microphone": "⚠ Permita o microfone para {app} — clique aqui",
+        "status.need_keyboard": "⚠ O diga não vê o teclado. Definições do Sistema → Privacidade e "
+        "Segurança → Monitorização de entrada → ligue {app}. O diga liga-se sozinho.",
+        "status.need_typing": "⚠ O macOS não deixa o diga escrever. Definições do Sistema → "
+        "Privacidade e Segurança → Acessibilidade → ligue {app}.",
+        "status.need_microphone": "⚠ O diga não pode usar o microfone. Definições do Sistema → "
+        "Privacidade e Segurança → Microfone → ligue {app}.",
+        "status.keyboard_ready": "Teclado ligado: mantenha {key} premido e fale.",
+        "status.restarting": "A «Monitorização de entrada» está ligada, mas o macOS só mostra o "
+        "teclado a um processo novo: a reiniciar o diga…",
         "status.languages": "Os seus idiomas: {langs} ({source})",
         "status.from_config": "das suas definições",
         "status.from_mac": "do macOS",
@@ -144,10 +176,6 @@ STRINGS: dict[str, dict[str, str]] = {
         "sounds.custom": "Personalizado ({name})",
         "menu.open_glossary": "Abrir glossário",
         "menu.quit": "Sair",
-        "menu.no_typing": "⚠ O macOS não deixa o diga escrever — veja a consola",
-        "status.no_typing": "⚠ O macOS não permite que {app} escreva noutras aplicações. Definições"
-        " do Sistema → Privacidade e Segurança → Acessibilidade → ligue {app} e"
-        " reinicie o diga.",
         "status.loading": "A carregar {model}…",
         "status.ready_hotkeys": "Pronto. {key}: mantenha premido para ditar e solte para "
         "inserir{send}; dois toques para ditados longos.",

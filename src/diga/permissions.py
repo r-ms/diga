@@ -48,6 +48,44 @@ def can_post_events() -> bool | None:
     return _bool_fn(_CG, "CGPreflightPostEventAccess")
 
 
+# System Settings → Privacy & Security panes, opened from the menu warning.
+SETTINGS_URL = {
+    "keyboard": "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent",
+    "typing": "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
+    "microphone": "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone",
+}
+
+
+def request_all() -> None:
+    """Ask macOS for everything diga needs up front, so the prompts appear at start and not in
+    the middle of the first dictation. Each prompt is shown once; after that these are no-ops."""
+    _bool_fn(_CG, "CGRequestListenEventAccess")  # Input Monitoring: see the hotkey
+    _bool_fn(_CG, "CGRequestPostEventAccess")  # Accessibility: type into other apps
+    try:
+        from AVFoundation import (  # type: ignore[import-not-found]
+            AVCaptureDevice,
+            AVMediaTypeAudio,
+        )
+
+        if int(AVCaptureDevice.authorizationStatusForMediaType_(AVMediaTypeAudio)) == 0:
+            AVCaptureDevice.requestAccessForMediaType_completionHandler_(
+                AVMediaTypeAudio, lambda granted: None
+            )
+    except Exception:
+        pass
+
+
+def missing() -> str | None:
+    """The first thing diga is not allowed to do: "keyboard", "typing", "microphone" — or None."""
+    if input_monitoring() is False:
+        return "keyboard"
+    if can_post_events() is False:
+        return "typing"
+    if microphone() is False:
+        return "microphone"
+    return None
+
+
 def microphone() -> bool | None:
     """True granted, False denied/restricted, None not asked yet (or unknown)."""
     try:
