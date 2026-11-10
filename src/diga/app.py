@@ -117,13 +117,21 @@ class App:
             log.warning(t("status.auto_without_detector", reason=missing))
             russian = create_transcriber("ru", self.cfg)
             return russian, True
+        from .asr.auto import AutoTranscriber
+
+        langs, source = self.cfg.spoken_languages()
+        where = t("status.from_config" if source == "config" else "status.from_mac")
+        log.info(t("status.languages", langs=", ".join(langs) or "—", source=where))
+        if not self.cfg.wants_russian():
+            log.info(t("status.russian_off"))
+            hint = lambda: log.warning(t("status.russian_heard"))  # noqa: E731
+            return AutoTranscriber(detector, None, on_russian_unhandled=hint), False
         try:
             log.info(t("status.loading", model=self.cfg.backend_for("ru")))
             russian = create_transcriber("ru", self.cfg)
         except MissingBackend:
             log.info(t("status.russian_missing"))
             return detector, False
-        from .asr.auto import AutoTranscriber
 
         auto = AutoTranscriber(
             detector,

@@ -67,6 +67,10 @@ class Config:
     # auto: Parakeet detects the language of every chunk and Russian chunks go to GigaAM
     # (asr/auto.py). Or fix it: ru | en | pt | any Whisper language code.
     language: str = "auto"
+    # The languages you dictate in, e.g. [ru, en]. None: what this Mac shows — its preferred
+    # languages and keyboard layouts. Russian among them loads the Russian recognizer (GigaAM,
+    # ~2 GB); without it Russian speech is left to Parakeet and nothing extra is downloaded.
+    languages: list[str] | None = None
     ui_language: str | None = None  # None: follow macOS
     # Show dictated text in the log. None: only in a terminal — not when the log goes to a
     # file (autostart), so your dictation is not kept on disk.
@@ -99,6 +103,20 @@ class Config:
     chunking: ChunkingConfig = field(default_factory=ChunkingConfig)
     hotkey: HotkeyConfig = field(default_factory=HotkeyConfig)
     terms: TermsConfig = field(default_factory=TermsConfig)
+
+    def spoken_languages(self) -> tuple[list[str], str]:
+        """(language codes, where they came from: "config" or "macOS")."""
+        from .system import code, mac_languages
+
+        if self.languages:
+            return list(dict.fromkeys(code(str(x)) for x in self.languages)), "config"
+        return mac_languages(), "macOS"
+
+    def wants_russian(self) -> bool:
+        """Load the Russian recognizer? Always for `language: ru`; in auto, if you speak it."""
+        if self.language == "ru":
+            return True
+        return self.language == "auto" and "ru" in self.spoken_languages()[0]
 
     def use_language_model(self) -> bool:
         if self.second_opinion_lm is not None:

@@ -24,6 +24,7 @@ ui.py (menu bar) ─── app.py wires everything, config.py / i18n.py / permis
 | `app.py` | Builds the recognizer + corrector for a language, wires recorder, hotkeys and menu, handles Ctrl-C. |
 | `config.py` | Dataclass defaults ← `config.yaml` ← menu `settings.json` (the sound) ← CLI. |
 | `models.py` | Model registry: Hugging Face repo, pinned revision, license, size. |
+| `system.py` | The languages this Mac shows (preferred languages, keyboard layouts), used when `languages` is not set. |
 | `permissions.py` | Microphone / Accessibility / Input Monitoring checks for `diga doctor`. |
 
 ## Design decisions

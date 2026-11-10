@@ -159,7 +159,7 @@ def needed(cfg: Config) -> list[ModelSpec]:
     """The models diga loads with this configuration (what ``diga models --download default``
     fetches, so the first dictation does not wait for a download)."""
     backends = {cfg.backend_for(cfg.language)}
-    if cfg.language == "auto":
+    if cfg.language == "auto" and cfg.wants_russian():
         backends.add(cfg.backend_for("ru"))
     russian = "gigaam" in backends
     if russian and cfg.second_opinion:

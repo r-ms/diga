@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.5] — 2026-11-10
+
+### Added
+- `languages`: the languages you dictate in (`languages: [ru, en]`, `--languages ru,en`). By
+  default they are read off the Mac: its preferred languages and keyboard layouts. Without
+  Russian among them the Russian models are neither downloaded nor loaded (1.6 GB of memory
+  instead of 4 GB); Russian speech is then left to Parakeet, with a one-time hint.
+- `diga doctor` shows your languages and where they came from.
+
 ## [0.1.4] — 2026-11-10
 
 ### Changed

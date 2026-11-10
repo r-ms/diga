@@ -33,7 +33,7 @@ def test_default_settings_need_both_russian_models_and_the_judge(monkeypatch):
 
     monkeypatch.setattr(diga.config, "memory_gb", lambda: 16.0)  # CI machines have ~7 GB
 
-    keys = {spec.key for spec in models.needed(Config())}
+    keys = {spec.key for spec in models.needed(Config(languages=["ru", "en"]))}
     assert keys == {
         "gigaam-v3-e2e-rnnt",
         "gigaam-v3-e2e-ctc-int8",
@@ -43,6 +43,9 @@ def test_default_settings_need_both_russian_models_and_the_judge(monkeypatch):
     }
     english_only = {spec.key for spec in models.needed(Config(language="en"))}
     assert english_only == {"parakeet-tdt-0.6b-v3"}
+    # auto, but Russian is not among your languages: nothing Russian is downloaded
+    no_russian = {spec.key for spec in models.needed(Config(languages=["en", "pt"]))}
+    assert no_russian == {"parakeet-tdt-0.6b-v3"}
 
 
 def test_small_macs_skip_the_language_model_download(monkeypatch):
@@ -50,4 +53,5 @@ def test_small_macs_skip_the_language_model_download(monkeypatch):
     from diga.config import Config
 
     monkeypatch.setattr(diga.config, "memory_gb", lambda: 8.0)
-    assert "qwen3-0.6b-4bit" not in {spec.key for spec in models.needed(Config())}
+    needed = {spec.key for spec in models.needed(Config(languages=["ru"]))}
+    assert "qwen3-0.6b-4bit" not in needed

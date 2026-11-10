@@ -21,16 +21,16 @@ key and the prompt is sent.
 - **Text appears while you speak.** Long dictation is cut into 10–20 s chunks at natural pauses
   and each chunk is typed as soon as it is recognized; after you stop, only the last chunk is
   left (≈0.1–0.5 s on an M4 Pro, see [benchmarks](docs/benchmarks.md)).
-- **Technical terms come out right.** A glossary fixes what recognizers mangle — *пужгид → git*,
-  *Алламу → ollama*, *cômite → commit*. For Russian, diga listens for the terms in the audio
-  itself (CTC keyword spotting) and then also matches text; in our benchmark that lifts correct
-  terms from 7% to 62% ([details](docs/benchmarks.md)).
-- **Nothing to choose.** Speak Russian, English, Portuguese or switch between them mid-sentence:
-  every chunk's language is detected on its own. Russian goes to GigaAM, and where GigaAM and
-  Parakeet disagree, a small language model (Qwen3 0.6B) reads both wordings in context and
-  picks the likelier one — *maby Just Смоу* becomes *maybe just small* without any glossary.
-  In our benchmark: correct terms 62% → 76%, word errors on technical dictation 36% → 29%,
-  unchanged on plain speech.
+- **Technical terms come out right.** A glossary fixes what recognizers mangle — *cube ernetes →
+  Kubernetes*, *cômite → commit*, *пужгид → git* — with about 30 common developer terms built in
+  and your own on top.
+- **Nothing to choose.** Speak English, Portuguese or any of 23 more European languages, and
+  switch between them mid-sentence: every chunk's language is detected on its own.
+- **Extra-strong Russian, including Russian mixed with English.** If you speak Russian, diga
+  adds GigaAM, the strongest open Russian recognizer, listens for technical terms in the audio
+  itself, and lets a small language model (Qwen3 0.6B) settle where GigaAM and Parakeet
+  disagree — *maby Just Смоу* becomes *maybe just small*. In our benchmark correct terms go from
+  7% to 76% ([details](docs/benchmarks.md)). If you don't, none of it is downloaded or loaded.
 - **Private.** Audio never leaves your Mac; the microphone is open only while you dictate. No
   accounts, no telemetry. Models are downloaded once from Hugging Face.
 
@@ -42,12 +42,17 @@ key and the prompt is sent.
 | English, Portuguese (European) + 23 European languages | [Parakeet TDT 0.6B v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) (MLX) | 2.5 GB | text |
 | Everything else Whisper knows | [Whisper large-v3-turbo](https://huggingface.co/mlx-community/whisper-large-v3-turbo) (MLX) | 1.6 GB | glossary as prompt + text |
 
-There is no language to pick. Parakeet hears every chunk and detects its language; when it
-writes a chunk mostly in Cyrillic, GigaAM recognizes the same audio again, Parakeet's version
-serves as a second opinion, and the Russian term correction runs. English and Portuguese come
-straight from Parakeet, so they cost nothing extra. Parakeet v3 was trained on European
-Portuguese, so Portugal's Portuguese is a first-class citizen. To pin one language (and load
-fewer models), set `language: en` in the [configuration](#configuration) or pass `--lang en`.
+There is no language to pick. Parakeet hears every chunk and detects its language, so English,
+Portuguese and the rest come straight from it. Parakeet v3 was trained on European Portuguese,
+so Portugal's Portuguese is a first-class citizen.
+
+Russian is handled by GigaAM when Russian is among **your languages**: by default the languages
+your Mac shows (System Settings → General → Language & Region, and your keyboard layouts), or
+the list you set yourself — `languages: [ru, en]` in the [configuration](#configuration), or
+`--languages ru,en`. Then a chunk Parakeet writes mostly in Cyrillic is recognized again by
+GigaAM, with Parakeet's version as a second opinion and the Russian term correction. Without
+Russian, diga uses about 1.6 GB of memory instead of 4 GB, and if it hears Russian anyway it
+says once how to turn the Russian recognizer on. To pin one language, set `language: en`.
 
 ## Install
 
@@ -67,7 +72,7 @@ curl -LsSf https://raw.githubusercontent.com/r-ms/diga/main/install.sh | sh
 ```
 
 Then hold the right ⌘ and speak; `diga doctor` checks permissions, recognizers and models.
-With every model loaded diga uses about 4 GB of memory (3.7 GB without the language model).
+diga uses about 4 GB of memory with Russian among your languages and 1.6 GB without.
 
 <details><summary>Step by step with uv</summary>
 
@@ -132,6 +137,7 @@ create `~/.config/diga/config.yaml`:
 
 ```yaml
 language: en                    # pin one language instead of auto: ru | en | pt | Whisper code
+languages: [ru, en]             # the languages you dictate in (default: your Mac's languages)
 send_return_after_hold: false   # type the text but don't press Return
 sounds: ~/my-sounds             # your own start.wav / done.wav (or soft, tick, drop, chime, off)
 second_opinion: false           # Russian: GigaAM alone (with language: ru, Parakeet is not loaded)

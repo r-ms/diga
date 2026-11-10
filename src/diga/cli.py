@@ -31,10 +31,18 @@ def _setup_logging(verbose: bool) -> None:
         logging.getLogger(noisy).setLevel(logging.WARNING)
 
 
-def cmd_run(args: argparse.Namespace) -> int:
+def _config(args: argparse.Namespace):
+    """config.yaml and menu settings, then the command-line overrides."""
     cfg = load_config()
-    if args.lang:
+    if getattr(args, "lang", None):
         cfg.language = args.lang
+    if getattr(args, "languages", None):
+        cfg.languages = [x.strip() for x in args.languages.split(",") if x.strip()]
+    return cfg
+
+
+def cmd_run(args: argparse.Namespace) -> int:
+    cfg = _config(args)
     set_language(cfg.ui_language)
     from .app import App
 
@@ -42,12 +50,12 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_doctor(_args: argparse.Namespace) -> int:
+def cmd_doctor(args: argparse.Namespace) -> int:
     from . import models
     from .asr import BACKENDS, installed
     from .permissions import host_app, run_checks
 
-    cfg = load_config()
+    cfg = _config(args)
     print(f"diga {__version__} · Python {sys.version.split()[0]} · host app: {host_app()}\n")
     print("Permissions")
     failed = False
@@ -60,11 +68,16 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
         state = "installed" if installed(backend) else f"not installed (diga[{extra}])"
         print(f"  {backend:<9} {state:<34} {langs}")
     if cfg.language == "auto":
-        russian = cfg.backend_for("ru") + (" + second opinion" if cfg.second_opinion else "")
+        langs, source = cfg.spoken_languages()
+        print(f"\nYour languages: {', '.join(langs) or '—'} (from {source})")
+        if cfg.wants_russian():
+            russian = cfg.backend_for("ru") + (" + second opinion" if cfg.second_opinion else "")
+        else:
+            russian = f"{cfg.backend_for('auto')} (ru is not among your languages)"
         route = f"{cfg.backend_for('auto')}; Russian → {russian}"
     else:
         route = cfg.backend_for(cfg.language)
-    print(f"\nLanguage: {cfg.language} → {route}")
+    print(f"Language: {cfg.language} → {route}")
     print(f"Glossary: {cfg.glossary_path()}")
     print("\nModels (downloaded on first use)")
     for spec in models.REGISTRY:
@@ -79,7 +92,7 @@ def cmd_models(args: argparse.Namespace) -> int:
     from . import models
 
     wanted = set(args.download or [])
-    default = {spec.key for spec in models.needed(load_config())}
+    default = {spec.key for spec in models.needed(_config(args))}
     for spec in models.REGISTRY:
         if spec.key in wanted or "all" in wanted or ("default" in wanted and spec.key in default):
             if not models.is_cached(spec):
@@ -114,6 +127,11 @@ def build_parser() -> argparse.ArgumentParser:
     for target in (p, run):
         target.add_argument(
             "--lang", help="auto (default), ru, en, pt or any Whisper language code"
+        )
+        target.add_argument(
+            "--languages",
+            metavar="LIST",
+            help="languages you dictate in, e.g. ru,en (default: this Mac's languages)",
         )
         target.add_argument(
             "--no-ui",

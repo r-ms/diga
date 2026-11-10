@@ -1,3 +1,3 @@
 """diga — offline push-to-talk dictation for macOS."""
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"

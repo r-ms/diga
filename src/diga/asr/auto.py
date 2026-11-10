@@ -33,8 +33,9 @@ class AutoTranscriber:
     def __init__(
         self,
         detector: Transcriber,
-        russian: Transcriber,
+        russian: Transcriber | None,
         *,
+        on_russian_unhandled: Callable[[], None] | None = None,
         second_opinion: bool = True,
         unsure: float = 0.8,
         insert: float = 0.85,
@@ -42,7 +43,8 @@ class AutoTranscriber:
         margin: float = 0.25,
     ) -> None:
         self.detector, self.russian = detector, russian
-        self.name = f"auto({detector.name}, ru: {russian.name})"
+        self.name = f"auto({detector.name}, ru: {russian.name if russian else detector.name})"
+        self._on_russian_unhandled = on_russian_unhandled  # called once, see transcribe()
         self._second_opinion = second_opinion
         self._merge_args = (unsure, insert, judge, margin)
         # One worker: GigaAM never runs twice at once, even when a dropped early run is
@@ -52,16 +54,25 @@ class AutoTranscriber:
 
     def warmup(self) -> None:
         self.detector.warmup()
-        self.russian.warmup()
+        if self.russian is not None:
+            self.russian.warmup()
 
     def transcribe(self, audio: np.ndarray) -> Transcript:
-        early = self._pool.submit(_timed, self.russian, audio) if self._last_was_russian else None
+        russian = self.russian
+        early = None
+        if russian is not None and self._last_was_russian:
+            early = self._pool.submit(_timed, russian, audio)
         heard = _timed(self.detector, audio)
         self._last_was_russian = dominant_script(heard.text) == "cyrillic"
         log.debug("  language: %s", "Russian" if self._last_was_russian else "not Russian")
         if not self._last_was_russian:
             return heard
-        future = early or self._pool.submit(_timed, self.russian, audio)
+        if russian is None:  # Russian is not among your languages: Parakeet's text stands
+            if self._on_russian_unhandled is not None:
+                self._on_russian_unhandled()
+                self._on_russian_unhandled = None
+            return heard
+        future = early or self._pool.submit(_timed, russian, audio)
         mine = replace(future.result(), language="ru")
         if not self._second_opinion:
             return mine

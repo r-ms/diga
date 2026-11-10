@@ -13,6 +13,14 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "The second opinion needs Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Hold {key} and speak",
+        "status.languages": "Your languages: {langs} ({source})",
+        "status.from_config": "from your settings",
+        "status.from_mac": "from macOS",
+        "status.russian_off": "Russian is not among them: the Russian models are not loaded. "
+        "Dictate in Russian? Add ru to `languages` in ~/.config/diga/config.yaml.",
+        "status.russian_heard": "That sounded like Russian, which is not among your languages, "
+        "so Parakeet alone recognized it. For the stronger Russian recognizer add ru to "
+        "`languages` in ~/.config/diga/config.yaml and restart diga.",
         "menu.key": "Key",
         "status.key": "Dictation key: {key}",
         "key.right_cmd": "right ⌘",
@@ -58,6 +66,14 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "Для второго мнения нужен Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "Держи {key} и говори",
+        "status.languages": "Твои языки: {langs} ({source})",
+        "status.from_config": "из настроек",
+        "status.from_mac": "из macOS",
+        "status.russian_off": "Русского среди них нет: русские модели не загружаются. "
+        "Диктуешь по-русски? Добавь ru в `languages` в ~/.config/diga/config.yaml.",
+        "status.russian_heard": "Похоже на русскую речь, а русского нет среди твоих языков, "
+        "поэтому её распознал один Parakeet. Для сильного русского распознавания добавь ru в "
+        "`languages` в ~/.config/diga/config.yaml и перезапусти diga.",
         "menu.key": "Клавиша",
         "status.key": "Клавиша диктовки: {key}",
         "key.right_cmd": "правый ⌘",
@@ -102,6 +118,14 @@ STRINGS: dict[str, dict[str, str]] = {
         "status.second_opinion_missing": "A segunda opinião precisa do Parakeet: "
         "uv tool install 'diga[ru,parakeet]'",
         "menu.hint": "{key}: mantenha premido e fale",
+        "status.languages": "Os seus idiomas: {langs} ({source})",
+        "status.from_config": "das suas definições",
+        "status.from_mac": "do macOS",
+        "status.russian_off": "O russo não está entre eles: os modelos russos não são carregados. "
+        "Dita em russo? Acrescente ru a `languages` em ~/.config/diga/config.yaml.",
+        "status.russian_heard": "Isto pareceu russo, que não está entre os seus idiomas, por isso "
+        "foi reconhecido só pelo Parakeet. Para o reconhecimento russo mais forte, acrescente ru "
+        "a `languages` em ~/.config/diga/config.yaml e reinicie o diga.",
         "menu.key": "Tecla",
         "status.key": "Tecla de ditado: {key}",
         "key.right_cmd": "⌘ direito",
