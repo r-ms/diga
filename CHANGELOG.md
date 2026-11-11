@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.10] — 2026-11-11
+
+### Fixed
+- Input Monitoring and Accessibility stayed empty for the Homebrew service: macOS lists an app
+  only when the app's own executable asks, and diga asked from its Python process. diga.app's
+  launcher now asks itself, so the prompts appear and "diga" is in both panes.
+
 ## [0.1.9] — 2026-11-10
 
 ### Fixed

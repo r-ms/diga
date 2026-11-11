@@ -2,6 +2,12 @@
 // and stays its parent: macOS attributes a child's microphone, keyboard and accessibility use
 // to the app that launched it, so permission prompts and System Settings say "diga" instead of
 // "Python". (exec would not do: the process would become Python itself.)
+//
+// It also asks for Input Monitoring and Accessibility itself, before starting diga: macOS
+// lists an app in those panes only when the app's own executable asks. Asked from the Python
+// child, the request was silently dropped and the panes stayed empty (the microphone, asked
+// from the child, did work).
+#include <ApplicationServices/ApplicationServices.h>
 #include <limits.h>
 #include <mach-o/dyld.h>
 #include <signal.h>
@@ -35,6 +41,9 @@ int main(int argc, char **argv) {
     if (!args) return 1;
     args[0] = run;
     for (int i = 1; i < argc; i++) args[i] = argv[i];
+
+    if (!CGPreflightListenEventAccess()) CGRequestListenEventAccess();  // see the hotkey
+    if (!CGPreflightPostEventAccess()) CGRequestPostEventAccess();      // type into other apps
 
     setenv("DIGA_APP", "1", 1);  // so diga names itself, not Python, in its permission hints
     signal(SIGTERM, forward);
