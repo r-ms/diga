@@ -3,10 +3,9 @@
 // to the app that launched it, so permission prompts and System Settings say "diga" instead of
 // "Python". (exec would not do: the process would become Python itself.)
 //
-// It also asks for Input Monitoring and Accessibility itself, before starting diga: macOS
-// lists an app in those panes only when the app's own executable asks. Asked from the Python
-// child, the request was silently dropped and the panes stayed empty (the microphone, asked
-// from the child, did work).
+// It also asks for Accessibility itself, before starting diga: macOS lists an app there only
+// when the app's own executable asks. Asked from the Python child, the request was silently
+// dropped and the pane stayed empty (the microphone, asked from the child, did work).
 #include <ApplicationServices/ApplicationServices.h>
 #include <limits.h>
 #include <mach-o/dyld.h>
@@ -42,8 +41,16 @@ int main(int argc, char **argv) {
     args[0] = run;
     for (int i = 1; i < argc; i++) args[i] = argv[i];
 
-    if (!CGPreflightListenEventAccess()) CGRequestListenEventAccess();  // see the hotkey
-    if (!CGPreflightPostEventAccess()) CGRequestPostEventAccess();      // type into other apps
+    // Accessibility covers both seeing the hotkey and typing. This prompt ("diga would like to
+    // control this computer…") is the one macOS shows to a background app, and it adds diga to
+    // the Accessibility list; CGRequestListenEventAccess alone showed nothing under launchd.
+    const void *keys[] = {kAXTrustedCheckOptionPrompt};
+    const void *values[] = {kCFBooleanTrue};
+    CFDictionaryRef options = CFDictionaryCreate(NULL, keys, values, 1,
+        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    AXIsProcessTrustedWithOptions(options);
+    CFRelease(options);
+    if (!CGPreflightListenEventAccess()) CGRequestListenEventAccess();
 
     setenv("DIGA_APP", "1", 1);  // so diga names itself, not Python, in its permission hints
     signal(SIGTERM, forward);

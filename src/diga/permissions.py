@@ -59,9 +59,12 @@ def can_post_events() -> bool | None:
     return False if (post is False or trusted is False) else None
 
 
-# System Settings → Privacy & Security panes, opened from the menu warning.
+# System Settings → Privacy & Security panes, opened from the menu warning. For the keyboard it is
+# Accessibility, not Input Monitoring: Accessibility also lets an app see the keys (a terminal
+# with Accessibility sees them while the Input Monitoring list is empty), it is the one pane
+# macOS adds a background app to when it asks, and it is needed for typing anyway.
 SETTINGS_URL = {
-    "keyboard": "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent",
+    "keyboard": "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
     "typing": "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
     "microphone": "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone",
 }
@@ -89,7 +92,7 @@ def request_all() -> None:
 def missing_all() -> list[str]:
     """Everything diga is not allowed to do, most important first."""
     out = []
-    if input_monitoring() is False:
+    if input_monitoring() is False and accessibility() is not True:
         out.append("keyboard")
     if can_post_events() is False:
         out.append("typing")

@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.11] — 2026-11-11
+
+### Fixed
+- The Accessibility prompt now actually appears for the Homebrew service, and diga is listed
+  there to switch on: the launcher asks the classic way (AXIsProcessTrustedWithOptions). The
+  CoreGraphics requests showed nothing for a background app.
+- Accessibility is enough to see the hotkey; diga no longer sends you to an empty Input
+  Monitoring list. The keyboard warning opens Accessibility.
+
 ## [0.1.10] — 2026-11-11
 
 ### Fixed

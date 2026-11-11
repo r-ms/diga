@@ -50,8 +50,8 @@ brew services start diga         # start now and at every login
 
 Then hold the right ⌘ and speak. Upgrade with `brew upgrade diga`.
 
-macOS asks for three permissions for diga: **Microphone**, **Accessibility** and **Input
-Monitoring** — the last two to see the ⌘ key and to type. `diga doctor` shows what is missing
+macOS asks for two permissions for diga: the **Microphone** and **Accessibility** (to see the ⌘
+key and to type). `diga doctor` shows what is missing
 and where to switch it on. diga uses about 4 GB of memory with Russian among your languages
 and 1.6 GB without.
 
@@ -171,9 +171,9 @@ The [architecture notes](docs/architecture.md) explain each step and the design 
 ## Troubleshooting
 
 - **Nothing happens when you hold the key.** The menu shows ⚠ with what is missing ("No keyboard
-  access — open Settings…"). Click it, turn **diga** on in the page that opens (Input Monitoring,
-  Accessibility or Microphone; run from a terminal, it is the terminal app instead), and diga
-  restarts itself as soon as macOS allows it. `diga doctor` lists what is missing.
+  access — open Settings…"). Click it, turn **diga** on in the page that opens (Accessibility —
+  it covers both the hotkey and typing — or Microphone; run from a terminal, it is the terminal
+  app instead), and diga restarts itself as soon as macOS allows it. `diga doctor` lists what is missing.
 - **What is diga doing?** Menu → Show log, or `diga logs -f` in a terminal. What you dictated is
   never written there.
 - **`brew upgrade diga` says the latest version is installed.** Homebrew refreshes its formulas

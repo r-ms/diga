@@ -25,6 +25,7 @@ def test_dictated_text_is_replaced_in_the_log_file(tmp_path):
 
 
 def test_missing_reports_the_keyboard_first(monkeypatch):
+    monkeypatch.setattr(permissions, "accessibility", lambda: False)
     monkeypatch.setattr(permissions, "input_monitoring", lambda: False)
     monkeypatch.setattr(permissions, "can_post_events", lambda: False)
     monkeypatch.setattr(permissions, "microphone", lambda: False)
@@ -68,3 +69,12 @@ def test_typing_is_allowed_with_either_macos_grant(monkeypatch):
     assert permissions.can_post_events() is False
     calls["CGPreflightPostEventAccess"] = True
     assert permissions.can_post_events() is True
+
+
+def test_accessibility_alone_is_enough_to_see_the_keyboard(monkeypatch):
+    monkeypatch.setattr(permissions, "input_monitoring", lambda: False)  # the list is empty
+    monkeypatch.setattr(permissions, "accessibility", lambda: True)
+    monkeypatch.setattr(permissions, "can_post_events", lambda: True)
+    monkeypatch.setattr(permissions, "microphone", lambda: True)
+    assert permissions.missing() is None
+    assert permissions.SETTINGS_URL["keyboard"].endswith("Privacy_Accessibility")
